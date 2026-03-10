@@ -18,7 +18,7 @@ export function useDarkModeContext(){
 /* Returned Context Provider */
 export default function DarkModeContextProvider({children}: DarkModeContextProviderPropsType){
 
-    const [isDarkMode, setIsDarkMode] = useState<boolean>(true)
+    const [isDarkMode, setIsDarkMode] = useState<boolean>(false)
 
     return (
         <DarkModeContext value={[isDarkMode, setIsDarkMode]}>
