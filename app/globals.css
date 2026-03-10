@@ -1,6 +1,33 @@
 @import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
 
 /* General */
+:root {
+    /* Color */
+    --color-banner:#ffdda1;
+    --color-main:whitesmoke;
+    --color-highlight: #ff8b26;
+    --color-border: #feb86a;
+
+    /* Dark mode color */
+    --color-dark-banner:#4E527E;
+    --color-dark-main:#2b2d42;
+    --color-dark-text: whitesmoke;
+
+    /* height */
+    --header-height: 100px;
+    --footer-height: 60px;
+    --min-content-height: calc(100vh - var(--header-height) - var(--footer-height));
+
+    /* width */
+    --min-content-width: calc(380px - 16px); /* 16px to account for the scroll width... */
+}
+
+* {
+    box-sizing: border-box;
+}
+
 body {
     font-family: var(--lato);
+    margin: 0;
 }
