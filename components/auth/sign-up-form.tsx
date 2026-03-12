@@ -35,7 +35,7 @@ export function SignUpForm({
 
     if (password !== repeatPassword) {
       setError("Passwords do not match");
-      setIsLoading(false);s
+      setIsLoading(false);
       return;
     }
 

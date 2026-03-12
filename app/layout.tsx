@@ -6,6 +6,8 @@ import Image from "next/image";
 import DarkModeContextProvider from "@/context/dark-mode-context-provider";
 import Footer from "@/components/footer/footer";
 import Body from "@/components/body/body";
+import Script from "next/script";
+import FbHashFix from "@/components/body/fb-hash-fix";
 
 const lato = Lato({
     subsets: ['latin'],
@@ -19,6 +21,7 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
         <html lang="en" className={lato.variable}>
             <DarkModeContextProvider>
                 <Body>
+                    <FbHashFix /> 
                     <Header />
                     <main className='px-4 relative min-h-(--min-content-height) flex flex-col sm:px-12 overflow-hidden'>
                         <Image
@@ -42,6 +45,7 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
                     <Footer />
                 </Body>
             </DarkModeContextProvider>
+
         </html>
     );
 }
