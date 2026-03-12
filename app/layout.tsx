@@ -1,11 +1,11 @@
 import "./globals.css";
 import { ReactNode } from "react";
 import { Lato } from 'next/font/google'
-import Header from "@/components/header";
-import Footer from "@/components/footer";
+import Header from "@/components/header/header";
 import Image from "next/image";
 import DarkModeContextProvider from "@/context/dark-mode-context-provider";
-import Body from "@/components/body";
+import Footer from "@/components/footer/footer";
+import Body from "@/components/body/body";
 
 const lato = Lato({
     subsets: ['latin'],

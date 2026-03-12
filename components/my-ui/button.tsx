@@ -5,12 +5,14 @@ import { twMerge } from "tailwind-merge"
 type ButtonPropsType = {
     children: ReactNode
     size: 'sm' | 'md' | 'lg' 
+    className?: string
 }
 
-export default function Button({children, size='sm'}: ButtonPropsType){
+export default function Button({children, size='sm', className = ''}: ButtonPropsType){
     
     const buttonCls = twMerge(clsx({
-        'py-2 px-4 bg-(--color-highlight) rounded-xl font-semibold border border-(--color-border) size-fit': true,
+        'py-2 px-4 bg-(--color-highlight) rounded-xl font-semibold border border-(--color-border) size-fit hover:cursor-pointer': true,
+        [className]: className !== '',
         'text-2xl font-extrabold py-3 px-5': size === 'md',
         'text-3xl font-extrabold py-4 px-6': size === 'lg'
     }))

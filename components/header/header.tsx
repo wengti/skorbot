@@ -1,16 +1,18 @@
 import Image from "next/image";
 import Link from "next/link";
-import Button from "./my-ui/button";
+import Button from "../my-ui/button";
 import DarkModeToggle from "./dark-mode-toggle";
+import HeaderAuthBtn from "./header-auth-btn/header-auth-btn";
+import { cache, Suspense } from "react";
 
-export default function Header(){
+export default async function Header() {
 
     return (
         <header className="bg-(--color-banner) dark:bg-(--color-dark-banner) p-2 relative z-1 h-(--header-height) sm:px-12">
             <nav className='flex justify-between items-center list-none'>
                 <li>
                     <Link href='/'>
-                        <Image 
+                        <Image
                             src='/images/skorbot_logo.png'
                             width={258}
                             height={90}
@@ -23,12 +25,11 @@ export default function Header(){
                         <DarkModeToggle />
                     </li>
                     <li>
-                        <Link href='/auth/login'>
-                            <Button size='sm'>Login</Button>
-                        </Link>
+                        <HeaderAuthBtn />
                     </li>
                 </div>
             </nav>
         </header>
     )
+
 }

@@ -7,6 +7,7 @@
     --color-banner:#ffdda1;
     --color-main:whitesmoke;
     --color-highlight: #ff8b26;
+    --color-pale: #FEB478;
     --color-border: #feb86a;
 
     /* Dark mode color */
@@ -30,4 +31,9 @@
 body {
     font-family: var(--lato);
     margin: 0;
+}
+
+/* Placeholder text color */
+input::placeholder {
+    color: gray;
 }
