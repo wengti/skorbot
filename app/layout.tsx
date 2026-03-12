@@ -8,6 +8,7 @@ import Footer from "@/components/footer/footer";
 import Body from "@/components/body/body";
 import Script from "next/script";
 import FbHashFix from "@/components/body/fb-hash-fix";
+import { Metadata } from "next";
 
 const lato = Lato({
     subsets: ['latin'],
@@ -15,6 +16,15 @@ const lato = Lato({
     variable: '--lato',
     display: 'swap'
 })
+
+export const metadata: Metadata = {
+    title: {
+        template: '%s | Skorbot',
+        default: 'Skorbot'
+    },
+    description: 'The landing page for Skorbot, a simple web app designed to arrange matchups, track score and monitor payment for self-arranged pickleball sessions.',
+    keywords: ['Next.js ', 'Pickleball ', 'Scoreboard ', 'Arrange Matchups ', 'Track Score ', 'Monitor Payment ', 'Skorbot ']
+}
 
 export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
     return (

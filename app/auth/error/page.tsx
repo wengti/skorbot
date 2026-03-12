@@ -1,7 +1,14 @@
 import Button from "@/components/my-ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
+
+
+export const metadata: Metadata = {
+    title: 'Auth Error',
+    description: "The authentication error page for Skorbot."
+}
 
 async function ErrorContent({
   searchParams,

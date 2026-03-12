@@ -1,4 +1,12 @@
 import { LoginForm } from "@/components/auth/login-form";
+import { Metadata } from "next";
+
+
+export const metadata: Metadata = {
+    title: 'Login',
+    description: "The login page for Skorbot."
+}
+
 
 export default function Page() {
     return (

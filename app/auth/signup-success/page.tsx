@@ -6,7 +6,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Metadata } from "next";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+    title: 'Sign-up success',
+    description: "The sign-up success page for Skorbot, the user is redireted here after they successfully sign up."
+}
 
 export default function Page() {
   return (

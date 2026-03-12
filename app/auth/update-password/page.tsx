@@ -1,4 +1,11 @@
 import { UpdatePasswordForm } from "@/components/auth/update-password-form";
+import { Metadata } from "next";
+
+
+export const metadata: Metadata = {
+    title: 'Update Password',
+    description: "The update password page for Skorbot, the user is redirected here after clicking the link sent to their email for resetting password."
+}
 
 export default function Page() {
   return (

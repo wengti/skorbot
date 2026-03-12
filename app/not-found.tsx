@@ -1,6 +1,13 @@
 import Button from "@/components/my-ui/button";
+import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+
+
+export const metadata: Metadata = {
+    title: 'Not Found',
+    description: 'The default 404 not found page for Skorbot.'
+}
 
 export default function GeneralNotFound() {
     return (
