@@ -53,7 +53,7 @@ export function LoginForm({
         }
     };
 
-    /* Social login */
+    /* Social login - FB*/
     const handleFbLogin = async (e: React.FormEvent) => {
         e.preventDefault()
         const supabase = createClient()
@@ -63,6 +63,28 @@ export function LoginForm({
         try {
             const { error } = await supabase.auth.signInWithOAuth({
                 provider: 'facebook',
+                options: {
+                    redirectTo: `${window.location.origin}/auth/oauth?next=/private`,
+                },
+            })
+
+            if (error) throw error
+        } catch (error: unknown) {
+            setError(error instanceof Error ? error.message : 'An error occurred')
+            setIsLoading(false)
+        }
+    }
+
+    /* Social login - Google */
+    const handleGoogleLogin = async (e: React.FormEvent) => {
+        e.preventDefault()
+        const supabase = createClient()
+        setIsLoading(true)
+        setError(null)
+
+        try {
+            const { error } = await supabase.auth.signInWithOAuth({
+                provider: 'google',
                 options: {
                     redirectTo: `${window.location.origin}/auth/oauth?next=/private`,
                 },
@@ -89,6 +111,11 @@ export function LoginForm({
                     <form onSubmit={handleFbLogin} className='w-fit'>
                         <Button type="submit" className="w-1/2 bg-[#1877F2]" disabled={isLoading}>
                             {isLoading ? 'Logging in...' : 'Continue with Facebook'}
+                        </Button>
+                    </form>
+                    <form onSubmit={handleGoogleLogin} className='w-fit'>
+                        <Button type="submit" className="w-1/2 bg-white" disabled={isLoading}>
+                            {isLoading ? 'Logging in...' : 'Continue with Google'}
                         </Button>
                     </form>
                 </div>
