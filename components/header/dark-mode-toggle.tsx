@@ -7,7 +7,11 @@ export default function DarkModeToggle(){
     const [isDarkMode, setIsDarkMode] = useDarkModeContext()
 
     const handleDarkModeToggle = () => {
-        setIsDarkMode(prevIsDarkMode => !prevIsDarkMode)
+        setIsDarkMode(prevIsDarkMode => {
+            localStorage.setItem('skorbot-theme', JSON.stringify(!prevIsDarkMode))
+            return !prevIsDarkMode
+        })
+        
     }
     
     return (
