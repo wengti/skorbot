@@ -13,7 +13,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export function ForgotPasswordForm({
   className,
@@ -23,6 +23,13 @@ export function ForgotPasswordForm({
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect( ()=> {
+    setEmail('')
+    setError(null)
+    setSuccess(false)
+    setIsLoading(false)
+  }, [])
 
   const handleForgotPassword = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,6 +48,7 @@ export function ForgotPasswordForm({
       setError(error instanceof Error ? error.message : "An error occurred");
     } finally {
       setIsLoading(false);
+      setEmail('')
     }
   };
 

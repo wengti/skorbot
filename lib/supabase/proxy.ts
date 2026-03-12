@@ -50,13 +50,16 @@ export async function updateSession(request: NextRequest) {
   const protectedRoute = ['/private'] // Currently using 'private' as a test example
   const isProtected = protectedRoute.some( route => request.nextUrl.pathname.startsWith(route))
 
+  const protectedFromLoggedInRoute = ['/auth/login', '/auth/sign-up']
+  const isProtectedFromLoggedIn = protectedFromLoggedInRoute.some( route => request.nextUrl.pathname.startsWith(route))
+
   if (!user && isProtected) {
     // no user, potentially respond by redirecting the user to the login page
     const url = request.nextUrl.clone();
     url.pathname = "/auth/login";
     return NextResponse.redirect(url);
   }
-  else if (user && request.nextUrl.pathname === '/auth/login'){
+  else if (user && isProtectedFromLoggedIn){
     // got user, potentially respond by redirecting the user to the home page
     const url = request.nextUrl.clone();
     url.pathname = "/";

@@ -1,4 +1,6 @@
+import Button from "@/components/my-ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import Link from "next/link";
 import { Suspense } from "react";
 
 async function ErrorContent({
@@ -43,7 +45,11 @@ export default function Page({
                 <ErrorContent searchParams={searchParams} />
               </Suspense>
             </CardContent>
+            <Link href='/' className="block ml-6 mb-6">
+                <Button size="sm" >Return to Home</Button>
+            </Link>
           </Card>
+          
         </div>
       </div>
     </div>

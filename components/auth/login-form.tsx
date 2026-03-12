@@ -14,7 +14,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { FaFacebook } from "react-icons/fa";
+import { FcGoogle } from "react-icons/fc";
 
 export function LoginForm({
     className,
@@ -24,7 +26,18 @@ export function LoginForm({
     const [password, setPassword] = useState("");
     const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
+    const [isFbLoading, setIsFbLoading] = useState(false);
+    const [isGoogleLoading, setIsGoogleLoading] = useState(false);
     const router = useRouter();
+
+    useEffect(() => {
+        setEmail('')
+        setPassword('')
+        setError(null)
+        setIsLoading(false)
+        setIsFbLoading(false)
+        setIsGoogleLoading(false)
+    }, [])
 
 
     /* Email Login */
@@ -57,7 +70,7 @@ export function LoginForm({
     const handleFbLogin = async (e: React.FormEvent) => {
         e.preventDefault()
         const supabase = createClient()
-        setIsLoading(true)
+        setIsFbLoading(true)
         setError(null)
 
         try {
@@ -71,7 +84,7 @@ export function LoginForm({
             if (error) throw error
         } catch (error: unknown) {
             setError(error instanceof Error ? error.message : 'An error occurred')
-            setIsLoading(false)
+            setIsFbLoading(false)
         }
     }
 
@@ -79,7 +92,7 @@ export function LoginForm({
     const handleGoogleLogin = async (e: React.FormEvent) => {
         e.preventDefault()
         const supabase = createClient()
-        setIsLoading(true)
+        setIsGoogleLoading(true)
         setError(null)
 
         try {
@@ -93,7 +106,7 @@ export function LoginForm({
             if (error) throw error
         } catch (error: unknown) {
             setError(error instanceof Error ? error.message : 'An error occurred')
-            setIsLoading(false)
+            setIsGoogleLoading(false)
         }
     }
 
@@ -106,19 +119,6 @@ export function LoginForm({
                         Enter your email below to login to your account
                     </CardDescription>
                 </CardHeader>
-
-                <div className='flex gap-4 justify-center mb-4 -mt-4'>
-                    <form onSubmit={handleFbLogin} className='w-fit'>
-                        <Button type="submit" className="w-1/2 bg-[#1877F2]" disabled={isLoading}>
-                            {isLoading ? 'Logging in...' : 'Continue with Facebook'}
-                        </Button>
-                    </form>
-                    <form onSubmit={handleGoogleLogin} className='w-fit'>
-                        <Button type="submit" className="w-1/2 bg-white" disabled={isLoading}>
-                            {isLoading ? 'Logging in...' : 'Continue with Google'}
-                        </Button>
-                    </form>
-                </div>
 
                 <CardContent>
                     <form onSubmit={handleLogin}>
@@ -152,21 +152,40 @@ export function LoginForm({
                                     onChange={(e) => setPassword(e.target.value)}
                                 />
                             </div>
-                            <Button type="submit" className="w-full" disabled={isLoading}>
+                            <Button type="submit" className="w-full" disabled={isLoading || isFbLoading || isGoogleLoading}>
                                 {isLoading ? "Logging in..." : "Login"}
                             </Button>
                             {error && <p className="text-sm text-red-500 -mt-6">{error}</p>}
                         </div>
-                        <div className="mt-4 text-center text-sm">
-                            Don&apos;t have an account?{" "}
-                            <Link
-                                href="/auth/sign-up"
-                                className="underline underline-offset-4"
-                            >
-                                Sign up
-                            </Link>
-                        </div>
                     </form>
+
+                    <div className="mt-4 text-center text-sm">
+                        Don&apos;t have an account?{" "}
+                        <Link
+                            href="/auth/sign-up"
+                            className="underline underline-offset-4"
+                        >
+                            Sign up
+                        </Link>
+                    </div>
+
+                    <div className='mt-4'>
+                        <p className='text-center mb-2 text-sm dark:text-(--color-dark-text) block full'>Or</p>
+                        <div className='flex gap-4 justify-center'>
+                            <form onSubmit={handleFbLogin} className='w-5/12 text-white'>
+                                <Button type="submit" className="w-full bg-[#1877F2] font-bold" disabled={isLoading || isFbLoading || isGoogleLoading}>
+                                    <p>{isFbLoading ? 'Logging in...' : 'Continue with'}</p>
+                                    <FaFacebook />
+                                </Button>
+                            </form>
+                            <form onSubmit={handleGoogleLogin} className='w-5/12 text-black'>
+                                <Button type="submit" className="w-full bg-white font-bold" disabled={isLoading || isFbLoading || isGoogleLoading}>
+                                    <p>{isGoogleLoading ? 'Logging in...' : 'Continue with'}</p>
+                                    <FcGoogle />
+                                </Button>
+                            </form>
+                        </div>
+                    </div>
                 </CardContent>
             </Card>
         </div>
