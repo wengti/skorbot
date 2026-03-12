@@ -6,7 +6,6 @@ import Image from "next/image";
 import DarkModeContextProvider from "@/context/dark-mode-context-provider";
 import Footer from "@/components/footer/footer";
 import Body from "@/components/body/body";
-import Script from "next/script";
 import FbHashFix from "@/components/body/fb-hash-fix";
 import { Metadata } from "next";
 

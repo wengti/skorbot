@@ -8,7 +8,7 @@ import { cache, Suspense } from "react";
 export default async function Header() {
 
     return (
-        <header className="bg-(--color-banner) dark:bg-(--color-dark-banner) p-2 relative z-1 h-(--header-height) sm:px-12">
+        <header className="bg-(--color-banner) dark:bg-(--color-dark-banner) p-2 z-1 h-(--header-height) sm:px-12">
             <nav className='flex justify-between items-center list-none'>
                 <li>
                     <Link href='/'>
