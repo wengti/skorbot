@@ -19,6 +19,9 @@ const lato = Lato({
 export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
     return (
         <html lang="en" className={lato.variable}>
+            <head>
+                <link rel='icon' href='/images/mascot_static.png' type='image/png' />
+            </head>
             <DarkModeContextProvider>
                 <Body>
                     <FbHashFix /> 
