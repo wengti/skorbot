@@ -25,7 +25,7 @@ export default function HeroPage() {
                     <p className='font-semibold text-2xl'><span className='text-(--color-highlight)'>Monitor</span> payment.</p>
                 </div>
                 <div className='pb-4'>
-                    <Link href='/'>
+                    <Link href='/auth/login'>
                         <Button size='md'>
                             Get Started Now!
                         </Button>

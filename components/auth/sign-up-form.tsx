@@ -72,7 +72,7 @@ export function SignUpForm({
                         name: name.trim(),
                         picture: getAProfilePicture()
                     },
-                    emailRedirectTo: `${window.location.origin}/protected`,
+                    emailRedirectTo: `${window.location.origin}/user/rooms`,
                 },
             });
             if (error) throw error;

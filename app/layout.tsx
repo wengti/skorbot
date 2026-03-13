@@ -33,7 +33,7 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
             </head>
             <DarkModeContextProvider>
                 <Body>
-                    <FbHashFix /> 
+                    <FbHashFix />
                     <Header />
                     <main className='px-4 relative min-h-(--min-content-height) flex flex-col sm:px-12 overflow-hidden'>
                         <Image

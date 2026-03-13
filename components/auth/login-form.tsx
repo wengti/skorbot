@@ -56,7 +56,7 @@ export function LoginForm({
             // Update this route to redirect to an authenticated route. The user already has an active session.
 
             //   window.location.href = "/private"
-            router.push('/private')
+            router.push('/user/rooms')
         } catch (error: unknown) {
             setError(error instanceof Error ? error.message : "An error occurred");
         } finally {
@@ -77,7 +77,7 @@ export function LoginForm({
             const { error } = await supabase.auth.signInWithOAuth({
                 provider: 'facebook',
                 options: {
-                    redirectTo: `${window.location.origin}/auth/oauth?next=/private`,
+                    redirectTo: `${window.location.origin}/auth/oauth?next=/user/rooms`,
                 },
             })
 
@@ -99,7 +99,7 @@ export function LoginForm({
             const { error } = await supabase.auth.signInWithOAuth({
                 provider: 'google',
                 options: {
-                    redirectTo: `${window.location.origin}/auth/oauth?next=/private`,
+                    redirectTo: `${window.location.origin}/auth/oauth?next=/user/rooms`,
                 },
             })
 

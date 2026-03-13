@@ -26,7 +26,7 @@ export default function Page() {
               </CardTitle>
               <CardDescription>You may proceed to browse the site now.</CardDescription>
             </CardHeader>
-            <Link href='/private' className='block pl-6 pb-6'>
+            <Link href='/user/rooms' className='block pl-6 pb-6'>
                 <Button size='sm'>Get started</Button>
             </Link>
             {/* <CardContent>
