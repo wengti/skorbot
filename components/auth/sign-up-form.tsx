@@ -15,6 +15,8 @@ import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { getAProfilePicture } from "@/lib/picture";
+import { getAppPageStaticInfo } from "next/dist/build/analysis/get-page-static-info";
 
 export function SignUpForm({
     className,
@@ -67,7 +69,8 @@ export function SignUpForm({
                 password,
                 options: {
                     data: {
-                        name: name.trim()
+                        name: name.trim(),
+                        picture: getAProfilePicture()
                     },
                     emailRedirectTo: `${window.location.origin}/protected`,
                 },

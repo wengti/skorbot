@@ -1,14 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
-import Button from "../my-ui/button";
 import DarkModeToggle from "./dark-mode-toggle";
 import HeaderAuthBtn from "./header-auth-btn/header-auth-btn";
-import { cache, Suspense } from "react";
 
 export default async function Header() {
 
     return (
-        <header className="bg-(--color-banner) dark:bg-(--color-dark-banner) p-2 z-1 h-(--header-height) sm:px-12">
+        <header className="bg-(--color-banner) dark:bg-(--color-dark-banner) p-2 h-(--header-height) sm:px-12 sticky md:relative top-0 z-3">
             <nav className='flex justify-between items-center list-none'>
                 <li>
                     <Link href='/'>

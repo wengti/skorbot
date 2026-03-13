@@ -3,28 +3,50 @@
 import { createClient } from "@/lib/supabase/client"
 import Button from "../../my-ui/button"
 import { useRouter } from "next/navigation"
+import { BiDoorOpen } from "react-icons/bi";
+import { useState } from "react";
+import Alert from "@/components/tailgrids/core/alert";
+import { Xmark2x } from "@tailgrids/icons";
 
 export default function HeaderLogoutBtn() {
 
     const router = useRouter()
+    const [error, setError] = useState<string>(null!)
 
     async function handleLogout() {
         const supabase = createClient()
         const { error } = await supabase.auth.signOut()
+        if (error) {
+            setError(error.message)
+        }
+        else {
+            router.push('/auth/login')
 
-        // window.location.href = '/auth/login'
-        router.push('/auth/login')
-        
+        }
+
     }
 
     return (
-        <button
-            onClick={() => { handleLogout() }}
-        >
-            <Button size='sm'>
-                Logout
-            </Button>
-        </button>
-
+        <>
+            {
+                error &&
+                <div className='bg-red-50 rounded-xl border-[#facbca] border-2 fixed top-5 left-0 opacity-90 z-3 sm:ml-4'>
+                    <Alert
+                        variant="danger"
+                        title="Error"
+                        message={`There was a problem with the authentication. \n ${error}`}
+                        icon={<Xmark2x />}
+                        onClose={() => { setError(null!) }}
+                    />
+                </div>
+            }
+            <button
+                onClick={() => { handleLogout() }}
+                className='flex gap-2 items-center w-full'
+            >
+                <BiDoorOpen />
+                <p>Logout</p>
+            </button>
+        </>
     )
 }

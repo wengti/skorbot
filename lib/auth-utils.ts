@@ -6,6 +6,7 @@ import { cache } from "react"
 
 export const getUserData = cache(async ():Promise<GetUserDataPropsType> => {
     try{
+        
         const supabase = await createClient()
         const { data, error } = await supabase.auth.getClaims()
         if (error) throw error
