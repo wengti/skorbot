@@ -1,5 +1,6 @@
 import { List } from "@/components/tailgrids/core/list";
 import UserLayoutListItem from "@/components/user-layout/user-layout-list-item";
+import ClientUserContextProvier from "@/context/client-user-context-provider";
 import { ReactNode } from "react";
 import { FaUserGroup } from "react-icons/fa6";
 import { MdOutlineQueryStats } from "react-icons/md";
@@ -22,7 +23,9 @@ export default function UserLayout({ children }: { children: ReactNode }) {
                 <UserLayoutListItem href='/user/rooms' icon={<FaUserGroup />}>Rooms</UserLayoutListItem>
                 <UserLayoutListItem href='/user/stats' icon={<MdOutlineQueryStats />}>Stats</UserLayoutListItem>
             </List>
-            {children}
+            <ClientUserContextProvier>
+                {children}
+            </ClientUserContextProvier>
         </>
     )
 }

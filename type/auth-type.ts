@@ -7,3 +7,10 @@ export type GetUserDataPropsType = {
         }
     } | null
 }
+
+export type ClientUserContextType = {
+    id: string,
+    name: string,
+    email: string,
+    picture: string
+}

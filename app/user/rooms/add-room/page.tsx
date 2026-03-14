@@ -1,11 +1,13 @@
 'use client'
 import FormEntry from "@/components/my-ui/form-entry";
 import SearchForm from "@/components/search-form/search-form";
+import { SearchResType } from "@/type/search-type";
 import { useState } from "react";
 
 export default function AddRoom() {
 
     const [roomName, setRoomName] = useState('')
+    const [participants, setParticipants] = useState<SearchResType[]>([])
 
     return (
         <section>
@@ -35,7 +37,7 @@ export default function AddRoom() {
                     <p className='mb-2 font-bold text-xl'>
                         Room Participants
                     </p>
-                    <SearchForm />
+                    <SearchForm participants={participants} setParticipants={setParticipants}/>
                 </FormEntry>
 
 
