@@ -47,14 +47,14 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
                         <div className='z-1 relative flex flex-col grow'>
                             {children}
                         </div>
-                        <Image
+                        {/* <Image
                             alt='A background image on the bottom left'
                             src='/images/bl_props.png'
                             height={520}
                             width={520}
                             loading='eager'
                             className='absolute -bottom-1/5 left-0 z-0 hidden lg:block'
-                        />
+                        /> */}
                     </main>
                     <Footer />
                 </Body>

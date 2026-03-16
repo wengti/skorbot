@@ -12,6 +12,7 @@ export default function RoomHomeTitle({ roomData }: { roomData: RoomHomeLayoutDa
     const currentSection = pathname.split('/').at(-1)
     let currentSectionName = 'Home'
     if(currentSection === 'all-participants') currentSectionName = 'All Participants'
+    if(currentSection === 'add-match') currentSectionName = 'New Match'
         
     const supabase = createClient()
 

@@ -10,6 +10,10 @@ import { ClientUserContextType } from "@/type/auth-type";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useActionState, useEffect, useState } from "react";
+import { FaPencilAlt } from "react-icons/fa";
+import { IoPeopleSharp } from "react-icons/io5";
+import { AiFillPicture } from "react-icons/ai";
+import Form from 'next/form'
 
 export default function AddRoom() {
 
@@ -59,16 +63,17 @@ export default function AddRoom() {
             <div className='flex gap-2 justify-center'>
 
                 {/* Left Side - Form */}
-                <form className='py-2 px-2 max-w-200 grow' action={formAction}>
+                <Form className='py-2 px-2 max-w-200 grow' action={formAction}>
 
                     {/* Form Entry - Room Name */}
                     <FormEntry index={1}>
                         <div className='flex flex-col justify-center z-2'>
                             <label
                                 htmlFor="roomName"
-                                className='mb-2 font-bold text-xl'
+                                className='mb-2 font-bold text-xl flex gap-2 items-center'
                             >
-                                Room Name
+                                <FaPencilAlt />
+                                <p>Room Name</p>
                             </label>
                             <input
                                 type='text'
@@ -86,17 +91,19 @@ export default function AddRoom() {
 
                     {/* Form Entry - Room Participants */}
                     <FormEntry index={2}>
-                        <p className='mb-2 font-bold text-xl'>
-                            Room Participants
-                        </p>
+                        <div className='mb-2 font-bold text-xl flex gap-2 items-center'>
+                            <IoPeopleSharp />
+                            <p>Room Participants</p>
+                        </div>
                         <SearchForm participants={participants} setParticipants={setParticipants} isPending={isPending} isSubmitted={isSubmitted}/>
                     </FormEntry>
 
                     {/* Form Entry - Room Picture */}
                     <FormEntry index={3}>
-                        <p className='font-bold text-xl'>
-                            Room Picture
-                        </p>
+                        <div className='font-bold text-xl flex gap-2 items-center'>
+                            <AiFillPicture />
+                            <p>Room Picture</p>
+                        </div>
                         <RoomPictursUploadZone
                             key={pathname} 
                             ownerId={userContext.id} 
@@ -117,7 +124,7 @@ export default function AddRoom() {
                             </button>
                         </Button>
                     </div>
-                </form>
+                </Form>
 
                 {/* Right Side - Skorbot */}
                 <div className='justify-center items-center hidden md:flex min-w-80'>

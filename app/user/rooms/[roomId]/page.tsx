@@ -1,5 +1,5 @@
+import RoomHomeResults from "@/components/room-home/room-home-results"
 import RoomHomeSearchForm from "@/components/room-home/room-home-search-form"
-import RoomHomeTitle from "@/components/room-home/room-home-title"
 import { createClient } from "@/lib/supabase/server"
 import { RoomDataType } from "@/type/room-data-type"
 import { notFound, redirect } from "next/navigation"
@@ -29,9 +29,14 @@ export default async function RoomHomePage({ params }: { params: Promise<{ roomI
         else if (roomData === null) notFound()
 
         return (
-            <section>
-                <RoomHomeSearchForm initParticipants={roomData[0].room_participants.map( p => p.users)} roomId={roomId} ownerId={roomData[0].owner}/>
-            </section>
+            <>
+                <section className='max-w-300 mx-auto'>
+                    <RoomHomeSearchForm initParticipants={roomData[0].room_participants.map(p => p.users)} roomId={roomId} ownerId={roomData[0].owner} />
+                </section>
+                <section className='mt-4 max-w-300 mx-auto'>
+                    <RoomHomeResults ownerId={roomData[0].owner} roomId={roomId}/>
+                </section>
+            </>
         )
 
     }
