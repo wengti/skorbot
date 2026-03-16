@@ -47,7 +47,7 @@ export default function RoomCard({ room, supabase }: { room: RoomDataType, supab
                 <p className='absolute -top-4 left-4 text-lg bg-(--color-pale) dark:bg-(--color-dark-pale) px-2 '>Shortcut</p>
                 <Link href={`/user/rooms/${room.id}`}><FaHome className='cursor-pointer' /></Link>
                 <MdLeaderboard className='cursor-pointer' />
-                <IoPeopleSharp className='cursor-pointer' />
+                <Link href={`/user/rooms/${room.id}/all-participants`}><IoPeopleSharp className='cursor-pointer' /></Link>
             </div>
         </div>
     )
