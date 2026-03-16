@@ -76,7 +76,7 @@ export function SignUpForm({
                 },
             });
             if (error) throw error;
-            router.push("/auth/signup-success");
+            window.location.href = "/auth/signup-success"; // Resolve using window.location.href for full cache reset to avoid un-updated state that causes data leakage between users on the same device
         } catch (error: unknown) {
             setError(error instanceof Error ? error.message : "An error occurred");
         } finally {

@@ -20,7 +20,7 @@ export default function HeaderLogoutBtn() {
             setError(error.message)
         }
         else {
-            router.push('/auth/login')
+            window.location.href = '/auth/login' // Resort to this to trigger full cache reset to prevent un-updated state that cause data leakage across users on the same device
 
         }
 

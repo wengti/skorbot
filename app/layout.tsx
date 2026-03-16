@@ -53,7 +53,7 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
                             height={520}
                             width={520}
                             loading='eager'
-                            className='absolute top-2/5 left-0 z-0 hidden lg:block'
+                            className='absolute -bottom-1/5 left-0 z-0 hidden lg:block'
                         />
                     </main>
                     <Footer />

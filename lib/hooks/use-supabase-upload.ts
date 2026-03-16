@@ -61,7 +61,7 @@ const useSupabaseUpload = (options: UseSupabaseUploadOptions) => {
         maxFileSize = Number.POSITIVE_INFINITY,
         maxFiles = 1,
         cacheControl = 3600,
-        upsert = false,
+        upsert = true,
     } = options
 
     const [files, setFiles] = useState<FileWithPreview[]>([])

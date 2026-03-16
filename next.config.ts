@@ -9,7 +9,9 @@ const nextConfig: NextConfig = {
             {
                 protocol: 'https',
                 hostname: 'platform-lookaside.fbsbx.com',
-            }], /* Allowing using profile images from google or fb logged-in */
+            }, /* Allowing using profile images from google or fb logged-in */
+            new URL('https://ijirausndjzonzvolrza.supabase.co/**')
+        ]
     }
 };
 

@@ -1,10 +1,12 @@
 'use server'
 
-import { SearchResType, SearchType } from "@/type/search-type"
 import { createClient } from "./supabase/server"
 import { getUserData } from "./auth-utils"
+import { ClientUserContextType } from "@/type/auth-type"
 
-export async function searchUsers(searchVal: string, participants: SearchResType[]) {
+
+
+export async function searchUsers(searchVal: string, participants: ClientUserContextType[]) {
 
     try{
         if(searchVal === '') {
@@ -19,7 +21,7 @@ export async function searchUsers(searchVal: string, participants: SearchResType
         const supabase = await createClient()
         const {data, error: searchError} = await supabase
                                 .from('users')
-                                .select<'*', SearchResType>()
+                                .select<'*', ClientUserContextType>()
                                 .ilike('name', `%${searchVal}%`)
                                 .neq('id', userData?.claims.sub)
                                 .not('id', 'in', `(${participants.map(participant => participant.id).join(',')})`)

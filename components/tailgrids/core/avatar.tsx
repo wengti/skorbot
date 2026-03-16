@@ -169,7 +169,7 @@ export function AvatarGroup({
     <div className={cn("flex items-center -space-x-2", className)}>
       {data.map(({ src, alt }, i) => (
         <Avatar
-          key={src}
+          key={alt}
           size={size}
           src={src}
           alt={alt}

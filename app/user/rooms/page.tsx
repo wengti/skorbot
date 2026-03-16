@@ -1,4 +1,6 @@
 import Button from "@/components/my-ui/button";
+import LoadingRoomCard from "@/components/room-card/loading-room-card";
+import RoomCardSection from "@/components/room-card/room-card-section";
 import Link from "next/link";
 import { BsClipboard2PlusFill } from "react-icons/bs";
 
@@ -6,8 +8,9 @@ export default function RoomsPage() {
 
     return (
         <>
-            <section>
-                <Link href='/user/rooms/add-room'>
+            {/* Add Room Button */}
+            <section className='w-fit'>
+                <Link href='/user/rooms/add-room' >
                     <Button
                         size='sm'
                         className='mt-2 flex gap-2 justify-center items-center bg-(--color-pale) dark:bg-(--color-dark-pale) hover:bg-(--color-highlight) active:bg-(--color-highlight) hover:text-black active:text-black'
@@ -17,6 +20,12 @@ export default function RoomsPage() {
                     </Button>
                 </Link>
             </section>
+
+            {/* Hosted Room */}
+            <RoomCardSection isOwner={true} />
+
+            {/* Joined Room */}
+            <RoomCardSection isOwner={false} />
         </>
     )
 }
