@@ -47,7 +47,7 @@ export async function updateSession(request: NextRequest) {
   const { data } = await supabase.auth.getClaims();
   const user = data?.claims;
 
-  const protectedRoute = ['/private'] // Currently using 'private' as a test example
+  const protectedRoute = ['/private', '/user'] // Currently using 'private' as a test example
   const isProtected = protectedRoute.some( route => request.nextUrl.pathname.startsWith(route))
 
   const protectedFromLoggedInRoute = ['/auth/login', '/auth/sign-up']

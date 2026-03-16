@@ -2,22 +2,9 @@ import { getUserData } from "@/lib/auth-utils"
 import { createClient } from "@/lib/supabase/server"
 import RoomCard from "./room-card"
 import { redirect } from "next/navigation"
+import { RoomDataType } from "@/type/room-data-type"
 
-type RoomParticipantsType = {
-    participant: string
-    users: {
-        name: string
-        picture: string
-    }
-}
 
-export type RoomDataType = {
-    id: string
-    name: string
-    picture: string
-    owner: string
-    room_participants: RoomParticipantsType[]
-}
 
 export default async function RoomCardGrid({isOwner}: {isOwner: boolean}) {
     try {

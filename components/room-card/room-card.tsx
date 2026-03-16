@@ -1,11 +1,13 @@
 import Image from "next/image";
-import { defaultRoomPictures } from "@/lib/room-picture";
+import { getARoomProfilePictureLink } from "@/lib/room-picture";
 import { AvatarGroup } from "../tailgrids/core/avatar";
 import { FaHome } from "react-icons/fa";
 import { MdLeaderboard } from "react-icons/md";
 import { IoPeopleSharp } from "react-icons/io5";
 import { SupabaseClient } from "@supabase/supabase-js";
-import { RoomDataType } from "./room-card-grid";
+import { getAProfilePicture } from "@/lib/picture";
+import Link from "next/link";
+import { RoomDataType } from "@/type/room-data-type";
 
 export default function RoomCard({ room, supabase }: { room: RoomDataType, supabase: SupabaseClient<any, "public", "public", any, any> }) {
 
@@ -13,11 +15,7 @@ export default function RoomCard({ room, supabase }: { room: RoomDataType, supab
     const roomName = room.name.length >= 12 ? room.name.slice(0, 12).trim() + '...' : room.name
 
     /* Get the room picture */
-    let roomPicture = room.picture
-    if (!defaultRoomPictures.includes(room.picture)) {
-        const { data: roomPictureData } = supabase.storage.from('room-pictures').getPublicUrl(`${room.owner}/${room.picture}`)
-        roomPicture = roomPictureData.publicUrl
-    }
+    const roomPicture = getARoomProfilePictureLink(supabase, room.owner, room.picture)
 
     /* Show the first 5 participants */
     const roomParticipants = room.room_participants.slice(0, 5).map(participant => {
@@ -47,7 +45,7 @@ export default function RoomCard({ room, supabase }: { room: RoomDataType, supab
             </div>
             <div className='h-35 w-full flex gap-4 text-7xl items-center justify-center border rounded-md relative'>
                 <p className='absolute -top-4 left-4 text-lg bg-(--color-pale) dark:bg-(--color-dark-pale) px-2 '>Shortcut</p>
-                <FaHome className='cursor-pointer' />
+                <Link href={`/user/rooms/${room.id}`}><FaHome className='cursor-pointer' /></Link>
                 <MdLeaderboard className='cursor-pointer' />
                 <IoPeopleSharp className='cursor-pointer' />
             </div>
