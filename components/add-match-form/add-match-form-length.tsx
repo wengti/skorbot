@@ -32,6 +32,7 @@ export default function AddMatchFormLength({length, setLength}:{length: 'short' 
                             value={option.value}
                             checked={length === option.value}
                             onChange={(event) => { setLength(option.value) }}
+                            aria-label={`Set the game length to ${option.value}`}
                         />
                         <span>{option.label}</span>
                     </Label>

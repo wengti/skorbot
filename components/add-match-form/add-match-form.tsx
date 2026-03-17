@@ -9,6 +9,7 @@ import AddMatchFormPlayers from './add-match-form-players';
 import AddMatchFormTeamConfig from './add-match-form-team-config';
 import AddMatchFormRounds from './add-match-form-rounds';
 import AddMatchFormLength from './add-match-form-length';
+import AddMatchFormNote from './add-match-form-note';
 
 export default function AddMatchForm({ roomParticipants }: { roomParticipants: ClientUserContextType[] }) {
 
@@ -16,6 +17,7 @@ export default function AddMatchForm({ roomParticipants }: { roomParticipants: C
     const [teamConfig, setTeamConfig] = useState<'one' | 'two'>('one')
     const [rounds, setRounds] = useState<number>(1)
     const [length, setLength] = useState<'short' | 'medium' | 'long'>('short')
+    const [note, setNote] = useState<string>('')
 
 
     return (
@@ -31,11 +33,15 @@ export default function AddMatchForm({ roomParticipants }: { roomParticipants: C
                     <AddMatchFormRounds rounds={rounds} setRounds={setRounds} />
                 </FormEntry>
                 {
-                    teamConfig === 'two' && 
+                    teamConfig === 'two' &&
                     <FormEntry index={4}>
                         <AddMatchFormLength length={length} setLength={setLength} />
                     </FormEntry>
                 }
+                <FormEntry index={teamConfig === 'two' ? 5 : 4}>
+                    <AddMatchFormNote note={note} setNote={setNote} />
+                </FormEntry>
+
 
             </Form>
             <div className='justify-center items-center hidden md:flex min-w-80'>

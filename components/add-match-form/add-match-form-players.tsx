@@ -8,9 +8,11 @@ import { ClientUserContextType } from "@/type/auth-type";
 
 export default function AddMatchFormPlayers({ roomParticipants, players, setPlayers }: { roomParticipants:ClientUserContextType[], players: Key[], setPlayers: Dispatch<SetStateAction<Key[]>> }) {
 
+    const playerIdToName: Record<string,string> = {}
     const playerList = roomParticipants.map(participant => {
+        playerIdToName[participant.id] = participant.name
         return (
-            <ComboboxItem key={participant.id} id={participant.name}>
+            <ComboboxItem key={participant.id} id={participant.id}>
                 {participant.name}
             </ComboboxItem>
         )
@@ -36,12 +38,12 @@ export default function AddMatchFormPlayers({ roomParticipants, players, setPlay
                     </Button>
                 </div>
 
-                <MultiCombobox value={players} onChange={setPlayers} className='w-full'>
+                <MultiCombobox value={players} onChange={setPlayers} className='w-full' aria-label={`Selecting players to be added to this match`}>
                     <ComboboxInputWrapper>
                         <ComboboxInput placeholder="Select players" className='bg-(--color-pale) dark:bg-(--color-dark-pale) rounded-lg' />
                         <ComboboxTrigger />
                     </ComboboxInputWrapper>
-                    <MultiComboboxDisplay className="capitalize" />
+                    <MultiComboboxDisplay className="capitalize" idMap={playerIdToName}/>
                     <ComboboxContent className='bg-(--color-pale) dark:bg-(--color-dark-pale)'>
                         <ComboboxList>
                             {playerList}

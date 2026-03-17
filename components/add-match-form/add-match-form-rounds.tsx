@@ -28,10 +28,11 @@ export default function AddMatchFormRounds({rounds, setRounds}:{rounds: number, 
                         )}
                     >
                         <RadioInput
-                            name="teamConfig"
+                            name="rounds"
                             value={option.value}
                             checked={rounds === option.value}
                             onChange={(event) => { setRounds(option.value) }}
+                            aria-label={`Set the game rounds to ${option.value}`}
                         />
                         <span>{option.label}</span>
                     </Label>

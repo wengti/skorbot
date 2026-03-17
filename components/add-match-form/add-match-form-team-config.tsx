@@ -25,10 +25,11 @@ export default function AddMatchFormTeamConfig({ teamConfig, setTeamConfig }: { 
                         )}
                     >
                         <RadioInput
-                            name="rounds"
+                            name="team_config"
                             value={option.value}
                             checked={teamConfig === option.value}
                             onChange={(event) => { setTeamConfig(option.value) }}
+                            aria-label={`Set the team config to ${option.label}`}
                         />
                         <span>{option.label}</span>
                     </Label>

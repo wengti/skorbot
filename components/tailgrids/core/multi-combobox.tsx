@@ -75,11 +75,13 @@ export function MultiCombobox<T extends object>({
 
 export interface MultiComboboxDisplayProps extends React.HTMLAttributes<HTMLDivElement> {
   renderTag?: (key: Key) => React.ReactNode;
+  idMap: Record<string, string>
 }
 
 export function MultiComboboxDisplay({
   className,
   renderTag,
+  idMap,
   ...props
 }: MultiComboboxDisplayProps) {
   const context = useContext(MultiComboboxContext);
@@ -87,7 +89,7 @@ export function MultiComboboxDisplay({
 
   return (
     <div className={cn("flex flex-wrap gap-2 mb-2", className)} {...props}>
-      {Array.from(context.selectedKeys).map(key => (
+      {Array.from(context.selectedKeys).map( (key) => (
         <React.Fragment key={key}>
           {renderTag ? (
             renderTag(key)
@@ -104,7 +106,7 @@ export function MultiComboboxDisplay({
                 </button>
               }
             >
-              {key}
+              {idMap[key]}
             </Badge>
           )}
         </React.Fragment>
