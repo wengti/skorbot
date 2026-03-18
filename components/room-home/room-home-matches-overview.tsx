@@ -3,7 +3,6 @@ import { ScrollArea, ScrollAreaViewport, ScrollBar } from "../tailgrids/core/scr
 import { ClientUserContextType } from "@/type/auth-type";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { FaArrowRight } from "react-icons/fa";
 import { AvatarGroup } from "../tailgrids/core/avatar";
 import { getAProfilePicture } from "@/lib/picture";
 import { getUserData } from "@/lib/auth-utils";
@@ -20,12 +19,14 @@ type matchDataType = {
 
 export default async function RoomHomeMatchesOverview({ roomId, roomParticipants }: { roomId: string, roomParticipants: ClientUserContextType[] }) {
     try {
+
+        /* Get the current user */
         const {data, error} = await getUserData()
         if(error) throw new Error(error instanceof Error ? error.message : error)
         else if (data === null) throw new Error("Cannot verify current user's id")
-        
         const currentUserId = data.claims.sub
 
+        /* Fetch all the relevant room */
         const supabase = await createClient()
         const { data: rawMatchData, error: matchError } = await supabase
             .from('matches')
@@ -35,8 +36,10 @@ export default async function RoomHomeMatchesOverview({ roomId, roomParticipants
         if (matchError || rawMatchData === null) throw new Error(matchError.message)
         const matchData = rawMatchData as matchDataType[]
 
+        /* Creating the match cell */
         const matchesDisplay = matchData.map(data => {
 
+            /* Creating the data needed for avatar group */
             const avatarGroupData = data.players.slice(0,5).map(player => {
                 const playerData = roomParticipants.find( p => p.id === player)
                 return {
@@ -45,8 +48,10 @@ export default async function RoomHomeMatchesOverview({ roomId, roomParticipants
                 }
             })
 
+            /* Converting to date time */
             const dateTime = new Date(data.created_at)
 
+            /* The actual match cell */
             return (
                 <div key={data.id} className='flex gap-2 bg-(--color-pale) dark:bg-(--color-dark-pale) rounded-xl h-20 items-center'>
                     <div className='grow px-2'>
@@ -64,13 +69,12 @@ export default async function RoomHomeMatchesOverview({ roomId, roomParticipants
                             <p className='border-l pl-1 hidden lg:block'>{data.num_of_rounds} round</p>
                         </div>
                     </div>
-                    
-
                 </div>
             )
         })
 
 
+        /* Returned Element */
         return (
             <ScrollArea className="h-100 w-full border my-4 rounded-xl">
                 <ScrollAreaViewport className="p-4 flex flex-col gap-2">
