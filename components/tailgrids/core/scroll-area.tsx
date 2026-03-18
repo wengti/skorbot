@@ -5,7 +5,7 @@ import { ScrollArea as ScrollAreaPrimitive } from "@base-ui/react/scroll-area";
 import { cva, type VariantProps } from "class-variance-authority";
 
 const scrollBarStyles = cva(
-  "flex touch-none p-px transition-colors select-none bg-background-soft-100 rounded-[inherit]",
+  "flex touch-none p-px transition-colors select-none rounded-[inherit]",
   {
     variants: {
       orientation: {

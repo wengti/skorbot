@@ -1,5 +1,6 @@
 'use server'
 
+import arrangeMatchups from "./match-algo"
 import { createClient } from "./supabase/server"
 
 type newMatchType = {
@@ -8,10 +9,11 @@ type newMatchType = {
     team_config: 'one' | 'two'
     num_of_rounds: number
     length: 'short' | 'medium' | 'long'
+    maxLength: number
     note: string
 }
 
-export async function createANewMatch({ room, players, team_config, num_of_rounds, length, note }: newMatchType) {
+export async function createANewMatch({ room, players, team_config, num_of_rounds, length, maxLength, note }: newMatchType) {
 
     try {
         /* Data sanitization */
@@ -37,16 +39,16 @@ export async function createANewMatch({ room, players, team_config, num_of_round
         const { data: insertedMatchData, error: addMatchError } = await supabase
             .from('matches')
             .insert(
-                { room, players, team_config, num_of_rounds, length, note }
+                { room, players, team_config, num_of_rounds, length, maxLength, note }
             )
             .select('id')
-        const newMatchData = insertedMatchData as { id: string } | null
+        const newMatchData = insertedMatchData as { id: string }[] | null
         if (addMatchError) throw new Error(addMatchError.message)
         else if (newMatchData === null) throw new Error('Fail to insert a new match entry.')
 
 
         /* Create new match player entry */
-        const { id: matchId } = newMatchData
+        const matchId = newMatchData[0].id
         const newMatchPlayerEntries = players.map(player => {
             return {
                 room, match: matchId, player, has_paid: currentUser === player //if the player is the owner, default to has_paid = true, else false
@@ -56,6 +58,30 @@ export async function createANewMatch({ room, players, team_config, num_of_round
             .from('match_players')
             .insert(newMatchPlayerEntries)
         if(addMatchPlayerError) throw new Error(addMatchPlayerError.message)
+
+        /* Create matches */
+        const rawMatchups = arrangeMatchups(players, team_config, length, num_of_rounds, maxLength, false)
+        const matchups = rawMatchups?.flatFullResult
+        if(matchups){
+            const tableName = team_config === 'one' ? 'results_1v1' : 'results_2v2'
+            const matchupData = matchups.map( (matchup) => {
+                return {
+                    ...matchup,
+                    room,
+                    match: matchId,
+                    score_a: 0,
+                    score_b: 0
+                }
+            })
+
+            const {error: addMatchEntryError} = await supabase
+                .from(tableName)
+                .insert(matchupData)
+            if(addMatchEntryError) throw new Error(addMatchEntryError.message)
+
+        } else{
+            throw new Error('Error in generating matchups.')
+        }
         
 
         return null

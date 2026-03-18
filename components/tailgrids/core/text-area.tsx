@@ -3,7 +3,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { useId, type ComponentProps } from "react";
 
 const textAreaStyles = cva(
-  "bg-input-background peer h-32 w-full rounded-lg border px-4 py-3.5 text-title-50 outline-none placeholder:text-input-placeholder-text focus:ring-4 disabled:border-base-100 disabled:bg-background-soft-50 disabled:text-input-disabled-text disabled:placeholder:text-input-disabled-text",
+  "bg-input-background peer h-32 w-full rounded-lg border px-4 py-3.5 text-title-50 outline-none placeholder:text-input-placeholder-text focus:ring-4",
   {
     variants: {
       state: {

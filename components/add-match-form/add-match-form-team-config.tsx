@@ -4,7 +4,7 @@ import { RadioInput } from "../tailgrids/core/radio-input"
 import { Dispatch, SetStateAction } from "react"
 import { cn } from "@/utils/cn"
 
-export default function AddMatchFormTeamConfig({ teamConfig, setTeamConfig }: { teamConfig: 'one' | 'two', setTeamConfig: Dispatch<SetStateAction<"one" | "two">> }) {
+export default function AddMatchFormTeamConfig({ teamConfig, setTeamConfig, isPending }: { teamConfig: 'one' | 'two', setTeamConfig: Dispatch<SetStateAction<"one" | "two">>, isPending: boolean }) {
     const options: { label: string, value: 'one' | 'two' }[] = [
         { label: "1 vs 1", value: 'one' },
         { label: "2 vs 2", value: 'two' }
@@ -30,6 +30,7 @@ export default function AddMatchFormTeamConfig({ teamConfig, setTeamConfig }: { 
                             checked={teamConfig === option.value}
                             onChange={(event) => { setTeamConfig(option.value) }}
                             aria-label={`Set the team config to ${option.label}`}
+                            disabled={isPending}
                         />
                         <span>{option.label}</span>
                     </Label>

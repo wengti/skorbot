@@ -32,7 +32,7 @@ export default async function AddMatchPage({ params }: { params: Promise<{ roomI
         const roomParticipants = roomParticipantsData.map(p => p.users)
 
         return (
-            <AddMatchForm roomParticipants={roomParticipants}/>
+            <AddMatchForm roomParticipants={roomParticipants} roomId={roomId}/>
         )
     }
     catch (error) {

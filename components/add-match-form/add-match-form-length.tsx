@@ -4,12 +4,18 @@ import { RadioInput } from "../tailgrids/core/radio-input"
 import { Label } from "../tailgrids/core/label"
 import { Dispatch, SetStateAction } from "react"
 
-export default function AddMatchFormLength({length, setLength}:{length: 'short' | 'medium' | 'long', setLength: Dispatch<SetStateAction<'short' | 'medium' | 'long'>>}) {
+type AddMatchFormLengthPropsType = {
+    length: 'short' | 'medium' | 'long'
+    setLength: Dispatch<SetStateAction<'short' | 'medium' | 'long'>>
+    isPending: boolean
+}
 
-    const options: { label: string, value: 'short' | 'medium' | 'long'}[] = [
+export default function AddMatchFormLength({ length, setLength, isPending}: AddMatchFormLengthPropsType) {
+
+    const options: { label: string, value: 'short' | 'medium' | 'long' }[] = [
         { label: "Short", value: 'short' },
-        { label: "Medium", value: 'medium'},
-        { label: "Long", value: 'long'}
+        { label: "Medium", value: 'medium' },
+        { label: "Long", value: 'long' }
     ]
 
 
@@ -19,12 +25,14 @@ export default function AddMatchFormLength({length, setLength}:{length: 'short' 
                 <TbRulerMeasure />
                 <p>Length of Each Round</p>
             </div>
-            <div className="flex gap-3">
+            <p className='text-sm h-fit -mt-3 mb-2 text-gray-500 font-bold'>Increasing length increases the number of matches and variety of your teammate.</p>
+            
+            <div className="flex gap-3 items-center">
                 {options.map(option => (
                     <Label
                         key={option.value}
                         className={cn(
-                            "group flex cursor-pointer items-center gap-3 select-none rounded-lg text-black dark:text-(--color-dark-text) has-checked:text-black border dark:border-(--color-dark-text) border-black bg-(--color-pale) dark:bg-(--color-dark-pale) p-4 transition-colors has-checked:bg-(--color-highlight) font-bold text-md"
+                            "group flex cursor-pointer items-center gap-3 select-none rounded-lg text-black dark:text-(--color-dark-text) has-checked:text-black border dark:border-(--color-dark-text) border-black bg-(--color-pale) dark:bg-(--color-dark-pale) p-4 transition-colors has-checked:bg-(--color-highlight) font-bold text-md h-fit"
                         )}
                     >
                         <RadioInput
@@ -33,11 +41,13 @@ export default function AddMatchFormLength({length, setLength}:{length: 'short' 
                             checked={length === option.value}
                             onChange={(event) => { setLength(option.value) }}
                             aria-label={`Set the game length to ${option.value}`}
+                            disabled={isPending}
                         />
                         <span>{option.label}</span>
                     </Label>
                 ))}
             </div>
+            
         </>
     )
 }

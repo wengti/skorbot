@@ -4,9 +4,9 @@ import { RadioInput } from "../tailgrids/core/radio-input"
 import { Label } from "../tailgrids/core/label"
 import { Dispatch, SetStateAction } from "react"
 
-export default function AddMatchFormRounds({rounds, setRounds}:{rounds: number, setRounds: Dispatch<SetStateAction<number>>}) {
+export default function AddMatchFormRounds({ rounds, setRounds, isPending }: { rounds: number, setRounds: Dispatch<SetStateAction<number>>, isPending: boolean }) {
 
-    const options: { label: string, value: number}[] = [
+    const options: { label: string, value: number }[] = [
         { label: "One", value: 1 },
         { label: "Two", value: 2 },
         { label: "Three", value: 3 }
@@ -19,6 +19,9 @@ export default function AddMatchFormRounds({rounds, setRounds}:{rounds: number, 
                 <IoTimerOutline />
                 <p>Number of Rounds</p>
             </div>
+            <p className='text-sm h-fit -mt-3 mb-2 text-gray-500 font-bold'>Repeat the same matches for up to 3 times.</p>
+
+
             <div className="flex gap-3">
                 {options.map(option => (
                     <Label
@@ -33,6 +36,7 @@ export default function AddMatchFormRounds({rounds, setRounds}:{rounds: number, 
                             checked={rounds === option.value}
                             onChange={(event) => { setRounds(option.value) }}
                             aria-label={`Set the game rounds to ${option.value}`}
+                            disabled={isPending}
                         />
                         <span>{option.label}</span>
                     </Label>
