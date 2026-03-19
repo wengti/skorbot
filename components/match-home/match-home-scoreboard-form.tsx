@@ -2,12 +2,15 @@
 import { PlayersDataType, ResultDataType } from "@/app/user/rooms/[roomId]/match/[matchId]/page";
 import { AvatarGroup } from "../tailgrids/core/avatar";
 import { FaLockOpen, FaLock } from "react-icons/fa";
-import { ChangeEvent, Dispatch, SetStateAction, useRef, useState } from "react";
+import { ChangeEvent, Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { RealtimeChannel } from "@supabase/supabase-js";
 
 function shortenName(name: string): string {
     return name.length > 11 ? name.slice(0, 9) + '..' : name
 }
+
+
 
 export default function MatchHomeScoreboardForm({ resultData, playersData, idx, tableName }: { resultData: ResultDataType, playersData: PlayersDataType[], idx: number, tableName: string }) {
 
@@ -18,6 +21,7 @@ export default function MatchHomeScoreboardForm({ resultData, playersData, idx, 
 
     const debounceTimerA = useRef<NodeJS.Timeout>(undefined!)
     const debounceTimerB = useRef<NodeJS.Timeout>(undefined!)
+    const channel = useRef<RealtimeChannel | null>(null)
 
     async function handleScoreChange(event: ChangeEvent<HTMLInputElement, HTMLInputElement>, team: string, scoreState: number, setScore: Dispatch<SetStateAction<number>>) {
 
@@ -30,8 +34,8 @@ export default function MatchHomeScoreboardForm({ resultData, playersData, idx, 
         let entry = {}
         let debounceTimer = team === 'teamA' ? debounceTimerA.current : debounceTimerB.current
         if (team === 'teamA') entry = { score_a: newScore }
-        else if (team === 'teamB') entry = {score_b: newScore}
-            
+        else if (team === 'teamB') entry = { score_b: newScore }
+
         /* Every time a user gives a keystroke (change event), first clear the previous timer */
         /* To prevent it firing off to the database */
         if (debounceTimer) clearTimeout(debounceTimer)
@@ -51,9 +55,45 @@ export default function MatchHomeScoreboardForm({ resultData, playersData, idx, 
                 setError(null)
             }
         }, 500)
-        
-
     }
+
+    async function fetchLatestResultData() {
+        const supabase = createClient()
+        const { data: latestResultData, error: resultError } = await supabase
+            .from(tableName)
+            .select('score_a, score_b, is_locked')
+        if(resultError) setError(new Error(resultError.message))
+        else if (latestResultData === null) setError(new Error('Failure to fetch the latest result data'))
+        else if (latestResultData.length === 0) setError(new Error('Failure to fetch the latest result data'))
+        else {
+            setScoreA(latestResultData[0].score_a)
+            setScoreB(latestResultData[0].score_b)
+            setIsLocked(latestResultData[0].is_locked)
+            setError(null)
+        }
+    }
+
+    useEffect(() => {
+        async function subscribeToResultRow() {
+            const supabase = createClient()
+            await supabase.realtime.setAuth()
+
+            channel.current = supabase
+                .channel(`topic:${resultData.id}`, { config: { private: true } })
+                .on('broadcast', { event: 'UPDATE' }, (payload => { fetchLatestResultData() }))
+                .subscribe()
+        }
+
+        subscribeToResultRow()
+
+        return () => {
+            if (channel.current) {
+                channel.current.unsubscribe()
+                channel.current = null
+            }
+        }
+
+    }, [])
 
     const playerA1 = playersData.find(p => p.player === resultData['player_a1'])?.users
     const playerA2 = resultData['player_a2'] ? playersData.find(p => p.player === resultData['player_a2'])?.users : undefined
