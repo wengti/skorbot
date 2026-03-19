@@ -44,7 +44,7 @@ export default function AddMatchForm({ roomParticipants, roomId }: { roomPartici
     /* Action State  */
     const [state, formAction, isPending] = useActionState(async () => {
         const castPlayers = players as string[]
-        const returnedState =  await createANewMatch({
+        const {errorState, matchId} =  await createANewMatch({
             room: roomId,
             players: castPlayers,
             team_config: teamConfig,
@@ -54,17 +54,17 @@ export default function AddMatchForm({ roomParticipants, roomId }: { roomPartici
             note
         })
 
-        if(returnedState === null) {
+        if(errorState === null) {
             setPlayers([])
             setTeamConfig('one')
             setRounds(1)
             setLength('short')
             setMaxLength(0)
             setNote('')
-            router.push(`/user/rooms/${roomId}`)
+            router.push(`/user/rooms/${roomId}/match/${matchId}`)
         }
 
-        return returnedState
+        return errorState
 
     }, null)
 

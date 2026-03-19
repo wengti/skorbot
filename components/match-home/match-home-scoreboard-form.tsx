@@ -5,6 +5,7 @@ import { FaLockOpen, FaLock } from "react-icons/fa";
 import { ChangeEvent, Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { RealtimeChannel } from "@supabase/supabase-js";
+import { handleScoreChangeBE } from "@/lib/scoreboard-utils";
 
 type PayloadType = {
     payload: {
@@ -21,15 +22,17 @@ function shortenName(name: string): string {
     return name.length > 11 ? name.slice(0, 9) + '..' : name
 }
 
-export default function MatchHomeScoreboardForm({ resultData, playersData, idx, tableName }: { resultData: ResultDataType, playersData: PlayersDataType[], idx: number, tableName: string }) {
+export default function MatchHomeScoreboardForm({ resultData, playersData, idx, tableName, roomId }: { resultData: ResultDataType, playersData: PlayersDataType[], idx: number, tableName: string, roomId:string }) {
 
     const [scoreA, setScoreA] = useState<number>(resultData['score_a'])
     const [scoreB, setScoreB] = useState<number>(resultData['score_b'])
     const [isLocked, setIsLocked] = useState<boolean>(resultData['is_locked'])
     const [error, setError] = useState<Error | null>(null)
 
+
     const debounceTimerA = useRef<NodeJS.Timeout>(undefined!)
     const debounceTimerB = useRef<NodeJS.Timeout>(undefined!)
+    const debounceTimerLock = useRef<NodeJS.Timeout>(undefined!)
     const channel = useRef<RealtimeChannel | null>(null)
 
     async function handleScoreChange(event: ChangeEvent<HTMLInputElement, HTMLInputElement>, team: string, scoreState: number, setScore: Dispatch<SetStateAction<number>>) {
@@ -51,11 +54,7 @@ export default function MatchHomeScoreboardForm({ resultData, playersData, idx, 
 
         /* Only if the user stop typing for at least 500ms, it fireoff to the database */
         debounceTimer = setTimeout(async () => {
-            const supabase = createClient()
-            const { error: changeScoreError } = await supabase
-                .from(tableName)
-                .update(entry)
-                .eq('id', resultData.id)
+            const changeScoreError = await handleScoreChangeBE(tableName, entry, resultData, roomId)
             if (changeScoreError) {
                 setScore(oldScore)
                 setError(new Error(changeScoreError.message))
@@ -64,6 +63,30 @@ export default function MatchHomeScoreboardForm({ resultData, playersData, idx, 
                 setError(null)
             }
         }, 500)
+    }
+
+    async function handleLock() {
+        setIsLocked((prevIsLocked) => !prevIsLocked)
+
+        if (debounceTimerLock.current) clearTimeout(debounceTimerLock.current)
+
+        debounceTimerLock.current = setTimeout(async () => {
+
+            const supabase = createClient()
+            const { error: setLockError } = await supabase
+                .from(tableName)
+                .update({ is_locked: !isLocked })
+                .eq('id', resultData.id)
+            if (setLockError) {
+                setIsLocked(isLocked)
+                setError(new Error(setLockError.message))
+            }
+            else {
+                setError(null)
+            }
+        }, 500)
+
+
     }
 
     function setLatestResultData(payload: PayloadType) {
@@ -149,7 +172,7 @@ export default function MatchHomeScoreboardForm({ resultData, playersData, idx, 
                     <p>{playerA2Name}</p>
                 </div>
                 <div className='flex flex-col w-1/3 items-center gap-2'>
-                    {isLocked ? <FaLock /> : <FaLockOpen />}
+                    {isLocked ? <FaLock onClick={() => handleLock()} /> : <FaLockOpen onClick={() => handleLock()} />}
                     <div className='flex'>
                         <input
                             type='text'
@@ -157,7 +180,8 @@ export default function MatchHomeScoreboardForm({ resultData, playersData, idx, 
                             id='scoreA'
                             value={scoreA}
                             onChange={(event) => { handleScoreChange(event, 'teamA', scoreA, setScoreA) }}
-                            className='w-full rounded-md bg-(--color-main) dark:bg-(--color-dark-main) text-center'
+                            className='w-full rounded-md bg-(--color-main) dark:bg-(--color-dark-main) text-center disabled:bg-slate-400'
+                            disabled={isLocked}
                         />
                         <input
                             type='text'
@@ -165,7 +189,8 @@ export default function MatchHomeScoreboardForm({ resultData, playersData, idx, 
                             id='scoreB'
                             value={scoreB}
                             onChange={(event) => { handleScoreChange(event, 'teamB', scoreB, setScoreB) }}
-                            className='w-full rounded-md bg-(--color-main) dark:bg-(--color-dark-main) text-center'
+                            className='w-full rounded-md bg-(--color-main) dark:bg-(--color-dark-main) text-center disabled:bg-slate-400'
+                            disabled={isLocked}
                         />
                     </div>
                 </div>

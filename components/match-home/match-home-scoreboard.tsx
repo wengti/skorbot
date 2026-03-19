@@ -7,7 +7,7 @@ import MatchHomeScoreboardForm from "./match-home-scoreboard-form"
 
 
 
-export default async function MatchHomeScoreboard({ matchData, playersData }: { matchData: MatchDataType, playersData: PlayersDataType[] }) {
+export default async function MatchHomeScoreboard({ matchData, playersData, roomId }: { matchData: MatchDataType, playersData: PlayersDataType[], roomId: string }) {
 
     try {
         const supabase = await createClient()
@@ -47,7 +47,7 @@ export default async function MatchHomeScoreboard({ matchData, playersData }: { 
                 </div>
                 <ScrollArea className="h-100 w-full border my-2 rounded-xl">
                     <ScrollAreaViewport className="p-4 grid grid-cols-[repeat(auto-fit,290px)] gap-4 justify-center">
-                        {resultData.map( (data, idx) => <MatchHomeScoreboardForm resultData={data} idx={idx} key={data.id} playersData={playersData} tableName={tableName}/>)}
+                        {resultData.map( (data, idx) => <MatchHomeScoreboardForm resultData={data} idx={idx} key={data.id} playersData={playersData} tableName={tableName} roomId={roomId}/>)}
                     </ScrollAreaViewport>
                     <ScrollBar orientation="vertical" />
                 </ScrollArea>

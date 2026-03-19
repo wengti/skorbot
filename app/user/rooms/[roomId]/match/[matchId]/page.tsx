@@ -66,7 +66,7 @@ export default async function MatchHomePage({ params }: { params: Promise<{ room
         return (
             <>
                 <MatchHomeTitle matchData={matchData[0]} />
-                <MatchHomeScoreboard matchData={matchData[0]} playersData={playersData}/>
+                <MatchHomeScoreboard matchData={matchData[0]} playersData={playersData} roomId={roomId}/>
             </>
         )
     }

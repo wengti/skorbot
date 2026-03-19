@@ -85,12 +85,12 @@ export async function createANewMatch({ room, players, team_config, num_of_round
         }
         
 
-        return null
+        return {errorState: null, matchId: matchId}
 
     }
     catch (error) {
-        if (error instanceof Error) return error
-        else return new Error('Unknown Error.')
+        if (error instanceof Error) return {errorState: error, matchId: ''}
+        else return {errorState: new Error('Unknown Error.'), matchId: ''}
     }
 
 }
