@@ -6,11 +6,20 @@ import { ChangeEvent, Dispatch, SetStateAction, useEffect, useRef, useState } fr
 import { createClient } from "@/lib/supabase/client";
 import { RealtimeChannel } from "@supabase/supabase-js";
 
-function shortenName(name: string): string {
-    return name.length > 11 ? name.slice(0, 9) + '..' : name
+type PayloadType = {
+    payload: {
+        record: {
+            score_a: number
+            score_b: number
+            is_locked: boolean
+        }
+    }
 }
 
 
+function shortenName(name: string): string {
+    return name.length > 11 ? name.slice(0, 9) + '..' : name
+}
 
 export default function MatchHomeScoreboardForm({ resultData, playersData, idx, tableName }: { resultData: ResultDataType, playersData: PlayersDataType[], idx: number, tableName: string }) {
 
@@ -57,33 +66,24 @@ export default function MatchHomeScoreboardForm({ resultData, playersData, idx, 
         }, 500)
     }
 
-    async function fetchLatestResultData() {
-        const supabase = createClient()
-        const { data: latestResultData, error: resultError } = await supabase
-            .from(tableName)
-            .select('score_a, score_b, is_locked')
-        if(resultError) setError(new Error(resultError.message))
-        else if (latestResultData === null) setError(new Error('Failure to fetch the latest result data'))
-        else if (latestResultData.length === 0) setError(new Error('Failure to fetch the latest result data'))
-        else {
-            setScoreA(latestResultData[0].score_a)
-            setScoreB(latestResultData[0].score_b)
-            setIsLocked(latestResultData[0].is_locked)
-            setError(null)
-        }
+    function setLatestResultData(payload: PayloadType) {
+        setScoreA(payload.payload.record.score_a)
+        setScoreB(payload.payload.record.score_b)
+        setIsLocked(payload.payload.record.is_locked)
     }
 
     useEffect(() => {
         async function subscribeToResultRow() {
+
             const supabase = createClient()
             await supabase.realtime.setAuth()
 
             channel.current = supabase
                 .channel(`topic:${resultData.id}`, { config: { private: true } })
-                .on('broadcast', { event: 'UPDATE' }, (payload => { fetchLatestResultData() }))
+                .on('broadcast', { event: 'UPDATE' }, (payload) => { setLatestResultData(payload as unknown as PayloadType) })
                 .subscribe()
-        }
 
+        }
         subscribeToResultRow()
 
         return () => {
