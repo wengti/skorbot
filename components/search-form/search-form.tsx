@@ -13,6 +13,7 @@ import { createClient } from "@/lib/supabase/client";
 import { useClientUserContext } from "@/context/client-user-context-provider";
 import { FaCrown } from "react-icons/fa";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 
 type SearchFormPropsType = {
@@ -34,6 +35,9 @@ export default function SearchForm({ participants, setParticipants, isPending = 
     /* Context - get the current user information */
     const currentUser = useClientUserContext()
     const isRoomExisting = roomId && ownerId
+
+    /* Router */
+    const router = useRouter()
 
     /* Effect */
     useEffect(() => {
@@ -80,18 +84,22 @@ export default function SearchForm({ participants, setParticipants, isPending = 
             if (!isPending) {
 
                 /* This code block is only run for when adding new user to an existing room */
+                /* This action is protected on Supabase with a constraint to prevent repeated row that has same room and user */
+                /* So it can avoid duplication */
                 if (isRoomExisting) {
                     const supabase = createClient()
                     const { error } = await supabase
                         .from('room_participants')
                         .insert({ room: roomId, participant: entry.id, is_owner: false })
                     if (error) throw new Error(error.message)
+                    router.refresh()
+                    
                 }
 
                 /* This code block is run for when creating new room AND when adding new user to an existing room */
                 /* This is for self maintained state, without having to keep query from database to get the latest participant list */
-                const alreadyExists = participants.some(p => p.id === entry.id)
-                const newParticipants = alreadyExists ? participants : [...participants, entry]
+                const alreadyExists = participants.some(p => p.id === entry.id) // check whether this entry is already part of the participant list to prevent duplication
+                const newParticipants = alreadyExists ? participants : [...participants, entry] 
                 setParticipants(newParticipants)
                 const result = await searchUsers(searchVal, newParticipants)
                 setSearchRes(result)
@@ -130,6 +138,7 @@ export default function SearchForm({ participants, setParticipants, isPending = 
                         .eq('room', roomId)
                         .eq('participant', entry.id)
                         .eq('is_owner', false)
+                    router.refresh()
                 }
 
                 /* This code block is run for when creating new room and when removing user from an existing room */

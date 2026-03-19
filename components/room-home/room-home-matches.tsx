@@ -4,7 +4,7 @@ import RoomHomeMatchesOverview from "./room-home-matches-overview";
 import { ClientUserContextType } from "@/type/auth-type";
 
 export default async function RoomHomeMatches({ownerId, roomId, roomParticipants}: {ownerId: string, roomId: string, roomParticipants: ClientUserContextType[]}) {
-        
+
 
     return (
         <section className='md:w-1/2'>
