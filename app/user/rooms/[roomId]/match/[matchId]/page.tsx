@@ -13,6 +13,9 @@ export type MatchDataType = {
     length: 'short' | 'medium' | 'long'
     maxLength: number
     note: string
+    rooms: {
+        owner: string
+    }
 }
 
 export type ResultDataType = {
@@ -41,11 +44,16 @@ export default async function MatchHomePage({ params }: { params: Promise<{ room
         const supabase = await createClient()
         const { data: rawMatchData, error: matchError } = await supabase
             .from('matches')
-            .select('id, created_at, team_config, num_of_rounds, length, maxLength, note')
+            .select(`
+                id, created_at, team_config, num_of_rounds, length, maxLength, note,
+                rooms(
+                    owner
+                )
+            `)
             .eq('id', matchId)
         if(matchError) throw new Error(matchError.message)
         else if (rawMatchData === null) throw new Error('Failure in fetching the data for the requested match.')
-        const matchData = rawMatchData as MatchDataType[]
+        const matchData = rawMatchData as unknown as MatchDataType[]
         
         const {data: rawPlayersData, error: playersError} = await supabase
             .from('match_players')

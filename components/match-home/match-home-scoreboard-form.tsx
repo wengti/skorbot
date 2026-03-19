@@ -1,11 +1,13 @@
 'use client'
-import { PlayersDataType, ResultDataType } from "@/app/user/rooms/[roomId]/match/[matchId]/page";
+import { MatchDataType, PlayersDataType, ResultDataType } from "@/app/user/rooms/[roomId]/match/[matchId]/page";
 import { AvatarGroup } from "../tailgrids/core/avatar";
 import { FaLockOpen, FaLock } from "react-icons/fa";
 import { ChangeEvent, Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { RealtimeChannel } from "@supabase/supabase-js";
 import { handleScoreChangeBE } from "@/lib/scoreboard-utils";
+import { getUserData } from "@/lib/auth-utils";
+import { useClientUserContext } from "@/context/client-user-context-provider";
 
 type PayloadType = {
     payload: {
@@ -22,13 +24,12 @@ function shortenName(name: string): string {
     return name.length > 11 ? name.slice(0, 9) + '..' : name
 }
 
-export default function MatchHomeScoreboardForm({ resultData, playersData, idx, tableName, roomId }: { resultData: ResultDataType, playersData: PlayersDataType[], idx: number, tableName: string, roomId:string }) {
+export default function MatchHomeScoreboardForm({ resultData, playersData, idx, tableName, matchData }: { resultData: ResultDataType, playersData: PlayersDataType[], idx: number, tableName: string, matchData: MatchDataType }) {
 
     const [scoreA, setScoreA] = useState<number>(resultData['score_a'])
     const [scoreB, setScoreB] = useState<number>(resultData['score_b'])
     const [isLocked, setIsLocked] = useState<boolean>(resultData['is_locked'])
     const [error, setError] = useState<Error | null>(null)
-
 
     const debounceTimerA = useRef<NodeJS.Timeout>(undefined!)
     const debounceTimerB = useRef<NodeJS.Timeout>(undefined!)
@@ -37,35 +38,66 @@ export default function MatchHomeScoreboardForm({ resultData, playersData, idx, 
 
     async function handleScoreChange(event: ChangeEvent<HTMLInputElement, HTMLInputElement>, team: string, scoreState: number, setScore: Dispatch<SetStateAction<number>>) {
 
+
         if (!(/^\d+$/.test(event.target.value))) return
 
         const oldScore = scoreState
         const newScore = Number(event.target.value)
         setScore(newScore)
 
-        let entry = {}
-        let debounceTimer = team === 'teamA' ? debounceTimerA.current : debounceTimerB.current
-        if (team === 'teamA') entry = { score_a: newScore }
-        else if (team === 'teamB') entry = { score_b: newScore }
+        if (team === 'teamA') {
+            /* Every time a user gives a keystroke (change event), first clear the previous timer */
+            /* To prevent it firing off to the database */
+            if (debounceTimerA) clearTimeout(debounceTimerA.current)
 
-        /* Every time a user gives a keystroke (change event), first clear the previous timer */
-        /* To prevent it firing off to the database */
-        if (debounceTimer) clearTimeout(debounceTimer)
+            /* Only if the user stop typing for at least 500ms, it fireoff to the database */
+            const entry = { score_a: newScore }
+            debounceTimerA.current = setTimeout(async () => {
 
-        /* Only if the user stop typing for at least 500ms, it fireoff to the database */
-        debounceTimer = setTimeout(async () => {
-            const changeScoreError = await handleScoreChangeBE(tableName, entry, resultData, roomId)
-            if (changeScoreError) {
-                setScore(oldScore)
-                setError(new Error(changeScoreError.message))
-            }
-            else {
-                setError(null)
-            }
-        }, 500)
+                const supabase = createClient()
+                const { error: changeScoreError } = await supabase
+                    .from(tableName)
+                    .update(entry)
+                    .eq('id', resultData.id)
+                if (changeScoreError) {
+                    setScore(oldScore)
+                    setError(new Error(changeScoreError.message))
+                }
+                else {
+                    setError(null)
+                }
+            }, 500)
+        }
+        else if (team === 'teamB') {
+            /* Every time a user gives a keystroke (change event), first clear the previous timer */
+            /* To prevent it firing off to the database */
+            if (debounceTimerB) clearTimeout(debounceTimerB.current)
+
+            /* Only if the user stop typing for at least 500ms, it fireoff to the database */
+            const entry = { score_b: newScore }
+            debounceTimerB.current = setTimeout(async () => {
+
+                const supabase = createClient()
+                const { error: changeScoreError } = await supabase
+                    .from(tableName)
+                    .update(entry)
+                    .eq('id', resultData.id)
+                if (changeScoreError) {
+                    setScore(oldScore)
+                    setError(new Error(changeScoreError.message))
+                }
+                else {
+                    setError(null)
+                }
+            }, 500)
+        }
+
+
+
     }
 
     async function handleLock() {
+
         setIsLocked((prevIsLocked) => !prevIsLocked)
 
         if (debounceTimerLock.current) clearTimeout(debounceTimerLock.current)
@@ -123,6 +155,11 @@ export default function MatchHomeScoreboardForm({ resultData, playersData, idx, 
     const playerB1 = playersData.find(p => p.player === resultData['player_b1'])?.users
     const playerB2 = resultData['player_b2'] ? playersData.find(p => p.player === resultData['player_b2'])?.users : undefined
 
+    const currentUser = useClientUserContext()
+    const isRoomOwner = matchData.rooms.owner === currentUser.id
+    const lockClsNameIfNotOwner = isRoomOwner ? '' : 'hidden'
+    const scoreClsNameIfNotOwner = isRoomOwner ? 'disabled:bg-slate-400' : ''
+
     const teamAAvatarData = []
     let playerA1Name = ''
     let playerA2Name = ''
@@ -172,25 +209,29 @@ export default function MatchHomeScoreboardForm({ resultData, playersData, idx, 
                     <p>{playerA2Name}</p>
                 </div>
                 <div className='flex flex-col w-1/3 items-center gap-2'>
-                    {isLocked ? <FaLock onClick={() => handleLock()} /> : <FaLockOpen onClick={() => handleLock()} />}
-                    <div className='flex'>
+                    {
+                        isLocked ?
+                        <FaLock onClick={() => handleLock()} className={`${lockClsNameIfNotOwner}`}/> :
+                        <FaLockOpen onClick={() => handleLock()} className={`${lockClsNameIfNotOwner}`}/>
+                    }
+                    <div className='flex grow'>
                         <input
                             type='text'
-                            name='scoreA'
-                            id='scoreA'
+                            name={`${resultData.id}-scoreA`}
+                            id={`${resultData.id}-scoreA`}
                             value={scoreA}
                             onChange={(event) => { handleScoreChange(event, 'teamA', scoreA, setScoreA) }}
-                            className='w-full rounded-md bg-(--color-main) dark:bg-(--color-dark-main) text-center disabled:bg-slate-400'
-                            disabled={isLocked}
+                            className={`w-full rounded-md bg-(--color-main) dark:bg-(--color-dark-main) text-center ${scoreClsNameIfNotOwner}`}
+                            disabled={isLocked || !isRoomOwner}
                         />
                         <input
                             type='text'
-                            name='scoreB'
-                            id='scoreB'
+                            name={`${resultData.id}-scoreB`}
+                            id={`${resultData.id}-scoreB`}
                             value={scoreB}
                             onChange={(event) => { handleScoreChange(event, 'teamB', scoreB, setScoreB) }}
-                            className='w-full rounded-md bg-(--color-main) dark:bg-(--color-dark-main) text-center disabled:bg-slate-400'
-                            disabled={isLocked}
+                            className={`w-full rounded-md bg-(--color-main) dark:bg-(--color-dark-main) text-center ${scoreClsNameIfNotOwner}`}
+                            disabled={isLocked || !isRoomOwner}
                         />
                     </div>
                 </div>

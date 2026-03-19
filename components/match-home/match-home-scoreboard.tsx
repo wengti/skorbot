@@ -47,7 +47,7 @@ export default async function MatchHomeScoreboard({ matchData, playersData, room
                 </div>
                 <ScrollArea className="h-100 w-full border my-2 rounded-xl">
                     <ScrollAreaViewport className="p-4 grid grid-cols-[repeat(auto-fit,290px)] gap-4 justify-center">
-                        {resultData.map( (data, idx) => <MatchHomeScoreboardForm resultData={data} idx={idx} key={data.id} playersData={playersData} tableName={tableName} roomId={roomId}/>)}
+                        {resultData.map( (data, idx) => <MatchHomeScoreboardForm resultData={data} idx={idx} key={data.id} playersData={playersData} tableName={tableName} matchData={matchData} />)}
                     </ScrollAreaViewport>
                     <ScrollBar orientation="vertical" />
                 </ScrollArea>
