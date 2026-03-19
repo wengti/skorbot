@@ -64,9 +64,10 @@ export async function createANewMatch({ room, players, team_config, num_of_round
         const matchups = rawMatchups?.flatFullResult
         if(matchups){
             const tableName = team_config === 'one' ? 'results_1v1' : 'results_2v2'
-            const matchupData = matchups.map( (matchup) => {
+            const matchupData = matchups.map( (matchup, idx) => {
                 return {
                     ...matchup,
+                    match_index: idx+1,
                     room,
                     match: matchId,
                     score_a: 0,

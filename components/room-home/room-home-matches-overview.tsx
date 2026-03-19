@@ -89,7 +89,7 @@ export default async function RoomHomeMatchesOverview({ roomId, roomParticipants
         return (
             <ScrollArea className="h-100 w-full border my-4 rounded-xl">
                 <ScrollAreaViewport className="p-4 flex flex-col gap-2">
-                    {matchesDisplay}
+                    {matchData.length > 0 ? matchesDisplay: <p className='text-gray-500 text-center'>No Result</p>}
                 </ScrollAreaViewport>
                 <ScrollBar orientation="vertical" />
             </ScrollArea>
