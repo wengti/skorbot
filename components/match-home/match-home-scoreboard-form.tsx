@@ -5,7 +5,6 @@ import { FaLockOpen, FaLock } from "react-icons/fa";
 import { ChangeEvent, Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { RealtimeChannel } from "@supabase/supabase-js";
-import { handleScoreChangeBE } from "@/lib/scoreboard-utils";
 import { getUserData } from "@/lib/auth-utils";
 import { useClientUserContext } from "@/context/client-user-context-provider";
 import { LiaStarSolid } from "react-icons/lia";

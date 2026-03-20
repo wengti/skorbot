@@ -505,6 +505,9 @@
     --color-dark-pale: #45486E;
     --color-dark-text: whitesmoke;
 
+    /* gold, silver, bronze */
+    --color-gold: #EFBF04;
+
     /* height */
     --header-height: 100px;
     --footer-height: 60px;

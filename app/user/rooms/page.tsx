@@ -1,5 +1,4 @@
 import Button from "@/components/my-ui/button";
-import LoadingRoomCard from "@/components/room-card/loading-room-card";
 import RoomCardSection from "@/components/room-card/room-card-section";
 import Link from "next/link";
 import { BsClipboard2PlusFill } from "react-icons/bs";

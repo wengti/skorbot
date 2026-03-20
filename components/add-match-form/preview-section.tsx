@@ -9,7 +9,7 @@ import { TableBody, TableCell, TableHead, TableHeader, TableRoot, TableRow } fro
 import { FaGear } from "react-icons/fa6";
 
 
-export default function PreviewSection({ preview, roomParticipants }: { preview: PreviewType, roomParticipants: ClientUserContextType[] }) {
+export default function PreviewSection({ preview, roomParticipants, showEstimation = true }: { preview: PreviewType, roomParticipants: ClientUserContextType[], showEstimation: boolean }) {
 
     const { flatFullResult, profile } = preview
 
@@ -19,15 +19,15 @@ export default function PreviewSection({ preview, roomParticipants }: { preview:
 
         /* Create the teammate and opponent table */
         const rows = Object.keys(profile[playerId].opponent).map((otherPlayerId) => {
-            const otherPlayer = roomParticipants.find( p => p.id === otherPlayerId)
-            const otherPlayerName = (otherPlayer && otherPlayer?.name.length > 12) ? otherPlayer?.name.slice(0,12) + '..' : otherPlayer?.name
+            const otherPlayer = roomParticipants.find(p => p.id === otherPlayerId)
+            const otherPlayerName = (otherPlayer && otherPlayer?.name.length > 12) ? otherPlayer?.name.slice(0, 12) + '..' : otherPlayer?.name
 
             return (
                 <TableRow key={otherPlayer?.id}>
                     <TableCell className='text-black dark:text-(--color-dark-text)'>{otherPlayerName}</TableCell>
                     <TableCell className='text-black dark:text-(--color-dark-text)'>{profile[playerId].teammate[otherPlayerId]}</TableCell>
                     <TableCell className='text-black dark:text-(--color-dark-text)'>{profile[playerId].opponent[otherPlayerId]}</TableCell>
-                </TableRow> 
+                </TableRow>
             )
         })
 
@@ -35,7 +35,7 @@ export default function PreviewSection({ preview, roomParticipants }: { preview:
         const curPlayer: ClientUserContextType | undefined = roomParticipants.find(participant => participant.id === playerId)
         if (curPlayer) {
             previewCards.push(
-                
+
                 /* Card */
                 <div key={curPlayer.id} className='flex flex-col border p-4 rounded-xl'>
 
@@ -112,17 +112,20 @@ export default function PreviewSection({ preview, roomParticipants }: { preview:
                 <ScrollAreaViewport className="">
 
                     {/* Total number of matches */}
-                    <div className='flex gap-2 items-center font-bold text-xl mb-4'>
-                        <FaGear />
-                        <p>{flatFullResult.length} Matches | Estimated Playtime: {flatFullResult.length * 15 } mins</p>
-                    </div>
+                    {
+                        showEstimation && 
+                        <div className='flex gap-2 items-center font-bold text-xl mb-4'>
+                            <FaGear />
+                            <p>{flatFullResult.length} Matches | Estimated Playtime: {flatFullResult.length * 15} mins</p>
+                        </div>
+                    }
 
                     {/* Card Grid */}
                     <div className='grid grid-cols-[repeat(auto-fill,300px)] gap-2 justify-center'>
                         {previewCards}
                     </div>
                 </ScrollAreaViewport>
-                <ScrollBar orientation="vertical"/>
+                <ScrollBar orientation="vertical" />
             </ScrollArea>
         </section>
     )

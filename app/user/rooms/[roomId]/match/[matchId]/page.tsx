@@ -1,3 +1,5 @@
+import MatchHomeLeaderboard from "@/components/match-home/match-home-leaderboard"
+import MatchHomePreview from "@/components/match-home/match-home-preview"
 import MatchHomeScoreboard from "@/components/match-home/match-home-scoreboard"
 import MatchHomeTitle from "@/components/match-home/match-home-title"
 import { createClient } from "@/lib/supabase/server"
@@ -13,6 +15,7 @@ export type MatchDataType = {
     length: 'short' | 'medium' | 'long'
     maxLength: number
     note: string
+    players: string[]
     rooms: {
         owner: string
     }
@@ -47,7 +50,7 @@ export default async function MatchHomePage({ params }: { params: Promise<{ room
         const { data: rawMatchData, error: matchError } = await supabase
             .from('matches')
             .select(`
-                id, created_at, team_config, num_of_rounds, length, maxLength, note,
+                id, created_at, team_config, num_of_rounds, length, maxLength, note, players,
                 rooms(
                     owner
                 )
@@ -101,7 +104,15 @@ export default async function MatchHomePage({ params }: { params: Promise<{ room
         return (
             <>
                 <MatchHomeTitle matchData={matchData[0]} />
-                <MatchHomeScoreboard matchData={matchData[0]} playersData={playersData} resultData={resultData}/>
+                <div className='lg:flex lg:gap-2'>
+                    <div className='lg:w-5/11'>
+                        <MatchHomeScoreboard matchData={matchData[0]} playersData={playersData} resultData={resultData} />
+                    </div>
+                    <div className='lg:w-6/11'>
+                        <MatchHomeLeaderboard playersData={playersData} resultData={resultData}/>
+                    </div>
+                </div>
+                <MatchHomePreview matchData={matchData[0]} playersData={playersData} />
             </>
         )
     }
