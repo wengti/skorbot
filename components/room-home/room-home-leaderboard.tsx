@@ -21,7 +21,7 @@ export default async function RoomHomeLeaderboard({ roomId }: { roomId: string }
             )
             .eq('room', roomId)
         if (RPError) throw new Error(RPError.message)
-        else if (rawRPData.length === 0 || rawRPData === null) throw new Error('Failure in fetching the room participants data.')
+        else if (rawRPData === null) throw new Error('Failure in fetching the room participants data.')
 
         const playersData = rawRPData.map(data => {
             return {
@@ -40,7 +40,7 @@ export default async function RoomHomeLeaderboard({ roomId }: { roomId: string }
             )
             .eq('room', roomId)
         if (twoError) throw new Error(twoError.message)
-        else if (twoData.length === 0 || twoData === null) throw new Error('Failure in fetching the 2v2 results data.')
+        else if (twoData === null) throw new Error('Failure in fetching the 2v2 results data.')
 
         const { data: oneData, error: oneError } = await supabase
             .from('results_1v1')
@@ -51,7 +51,7 @@ export default async function RoomHomeLeaderboard({ roomId }: { roomId: string }
             )
             .eq('room', roomId)
         if (oneError) throw new Error(oneError.message)
-        else if (oneData.length === 0 || oneData === null) throw new Error('Failure in fetching the 1v1 results data.')
+        else if (oneData === null) throw new Error('Failure in fetching the 1v1 results data.')
 
         const resultData = [...oneData, ...twoData]
 
