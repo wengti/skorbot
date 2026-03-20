@@ -50,8 +50,7 @@ export default function MatchHomeLeaderboardUserComponent({ playersRecord }: { p
 
     return (
 
-        <div className='border rounded-lg mt-2' >
-
+        <div className='border rounded-lg my-2' >
 
             <ScrollArea className='h-100'>
                 <ScrollAreaViewport className=''>
