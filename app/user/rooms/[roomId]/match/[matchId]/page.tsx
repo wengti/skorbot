@@ -39,8 +39,10 @@ export type PlayersDataType = {
 export default async function MatchHomePage({ params }: { params: Promise<{ roomId: string, matchId: string }> }) {
 
     try {
+        /* Getting roomId & matchId from the URL */
         const { roomId, matchId } = await params
 
+        /* Fetch the data of the match from 'matches' table */
         const supabase = await createClient()
         const { data: rawMatchData, error: matchError } = await supabase
             .from('matches')
@@ -51,11 +53,12 @@ export default async function MatchHomePage({ params }: { params: Promise<{ room
                 )
             `)
             .eq('id', matchId)
-        if(matchError) throw new Error(matchError.message)
+        if (matchError) throw new Error(matchError.message)
         else if (rawMatchData === null) throw new Error('Failure in fetching the data for the requested match.')
         const matchData = rawMatchData as unknown as MatchDataType[]
-        
-        const {data: rawPlayersData, error: playersError} = await supabase
+
+        /* Fetch the data of the player involved in this match from 'match_players' table */
+        const { data: rawPlayersData, error: playersError } = await supabase
             .from('match_players')
             .select(
                 `
@@ -66,15 +69,39 @@ export default async function MatchHomePage({ params }: { params: Promise<{ room
                 `
             )
             .eq('match', matchId)
-        
-        if(playersError) throw new Error(playersError.message)
+        if (playersError) throw new Error(playersError.message)
         else if (rawPlayersData === null) throw new Error('Failure in fetching the player data for the requested match.')
         const playersData = rawPlayersData as unknown as PlayersDataType[]
+
+
+        /* Fetch the results corresponding to this match ID from either `results_1v1` or `results_2v2` */
+        const tableName = matchData[0].team_config === 'one' ? 'results_1v1' : 'results_2v2'
+        let resultData: ResultDataType[] = null!
+        if (matchData[0].team_config === 'one') {
+            const { data: rawResultData, error: resultError } = await supabase
+                .from(tableName)
+                .select('id, player_a1, score_a, player_b1, score_b, is_locked, match_index')
+                .eq('match', matchData[0].id)
+                .order('match_index', { ascending: true })
+            if (resultError) throw new Error(resultError.message)
+            else if (rawResultData === null) throw new Error('Failure in fetching the result data for the requested match.')
+            resultData = rawResultData as ResultDataType[]
+        }
+        else if (matchData[0].team_config === 'two') {
+            const { data: rawResultData, error: resultError } = await supabase
+                .from(tableName)
+                .select('id, player_a1, player_a2, score_a, player_b1, player_b2, score_b, is_locked, match_index')
+                .eq('match', matchData[0].id)
+                .order('match_index', { ascending: true })
+            if (resultError) throw new Error(resultError.message)
+            else if (rawResultData === null) throw new Error('Failure in fetching the result data for the requested match.')
+            resultData = rawResultData as ResultDataType[]
+        }
 
         return (
             <>
                 <MatchHomeTitle matchData={matchData[0]} />
-                <MatchHomeScoreboard matchData={matchData[0]} playersData={playersData} roomId={roomId}/>
+                <MatchHomeScoreboard matchData={matchData[0]} playersData={playersData} resultData={resultData}/>
             </>
         )
     }
