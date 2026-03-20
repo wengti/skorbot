@@ -8,6 +8,8 @@ import { ClientUserContextType } from "@/type/auth-type"
 export default async function RoomHomeLeaderboard({ roomId }: { roomId: string }) {
 
     try {
+
+        /* Fetch the room participants detail of this room */
         const supabase = await createClient()
         const { data: rawRPData, error: RPError } = await supabase
             .from('room_participants')
@@ -23,6 +25,7 @@ export default async function RoomHomeLeaderboard({ roomId }: { roomId: string }
         if (RPError) throw new Error(RPError.message)
         else if (rawRPData === null) throw new Error('Failure in fetching the room participants data.')
 
+        /* Map the fetched data in such a way that it statisfies the required format of PlayersDataType */
         const playersData = rawRPData.map(data => {
             return {
                 player: data.participant,
@@ -31,6 +34,7 @@ export default async function RoomHomeLeaderboard({ roomId }: { roomId: string }
             }
         })
 
+        /* Fetch the results of 2v2 */
         const { data: twoData, error: twoError } = await supabase
             .from('results_2v2')
             .select(
@@ -42,6 +46,7 @@ export default async function RoomHomeLeaderboard({ roomId }: { roomId: string }
         if (twoError) throw new Error(twoError.message)
         else if (twoData === null) throw new Error('Failure in fetching the 2v2 results data.')
 
+        /* Fetch the results of 1v1 */
         const { data: oneData, error: oneError } = await supabase
             .from('results_1v1')
             .select(
@@ -52,9 +57,11 @@ export default async function RoomHomeLeaderboard({ roomId }: { roomId: string }
             .eq('room', roomId)
         if (oneError) throw new Error(oneError.message)
         else if (oneData === null) throw new Error('Failure in fetching the 1v1 results data.')
-
+        
+        /* Merge the results of 1v1 and 2v2  */
         const resultData = [...oneData, ...twoData]
 
+        /* Pass on to the server component for computing the results */
         return <MatchHomeLeaderboardServerComponent playersData={playersData} resultData={resultData} />
     }
     catch (error) {

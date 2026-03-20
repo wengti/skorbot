@@ -10,8 +10,10 @@ import { TbSwords } from "react-icons/tb"
 
 export default async function RoomHomePage({ params }: { params: Promise<{ roomId: string }> }) {
     try {
+        /* Get room id */
         const { roomId } = await params
 
+        /*  Get room details */
         const supabase = await createClient()
         const { data, error } = await supabase
             .from('rooms')
@@ -33,11 +35,14 @@ export default async function RoomHomePage({ params }: { params: Promise<{ roomI
 
         return (
             <>
+                {/* The search form */}
                 <section className='max-w-300 mx-auto'>
                     <RoomHomeSearchForm initParticipants={roomData[0].room_participants.map(p => p.users)} roomId={roomId} ownerId={roomData[0].owner} />
                 </section>
+
                 <section className='mt-4 max-w-300 mx-auto flex flex-col gap-4 md:flex-row md:gap-2'>
 
+                    {/* All room matches overview */}
                     <section className='md:w-1/2'>
                         <div className='text-xl font-bold flex gap-2 items-center'>
                             <TbSwords />
@@ -46,6 +51,7 @@ export default async function RoomHomePage({ params }: { params: Promise<{ roomI
                         <RoomHomeMatchesOverview ownerId={roomData[0].owner} roomId={roomId} roomParticipants={roomData[0].room_participants.map(p => p.users)} />
                     </section>
 
+                    {/* All time leaderboard in this room */}
                     <section className='grow'>
                         <div className='text-xl font-bold flex gap-2 items-center'>
                             <MdLeaderboard />

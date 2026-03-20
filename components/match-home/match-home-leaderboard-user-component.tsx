@@ -14,17 +14,20 @@ function shortenName(name: string): string {
 
 export default function MatchHomeLeaderboardUserComponent({ playersRecord }: { playersRecord: PlayersRecordType[] }) {
 
-
+    /* Class Name for cell rows */
     const headerClsName = 'text-black font-bold dark:text-(--color-dark-text) p-1.5 sm:text-base'
     const rowClsName = 'text-black font-bold dark:text-(--color-dark-text) text-xs p-1.5 sm:text-base'
 
+    /* ------------ */
     /* Top 3 player */
+    /* ------------ */
     const rawLeaderboardData = playersRecord.slice(0, 3).map((p, idx) => {
         return { name: shortenName(p.user.name), rank: (3 - idx), picture: p.user.picture }
     })
     while (rawLeaderboardData.length < 3) {
         rawLeaderboardData.push({ name: '', rank: (3 - rawLeaderboardData.length), picture: '/images/profile_inactive.png' })
     }
+    /* Rearrange in the form of 2nd, 1st and 3rd */
     const leaderboardData = [
         rawLeaderboardData[1],
         rawLeaderboardData[0],
@@ -52,10 +55,15 @@ export default function MatchHomeLeaderboardUserComponent({ playersRecord }: { p
 
         <div className='border rounded-lg my-2' >
 
+            {/* Scroll Area */}
             <ScrollArea className='h-100'>
-                <ScrollAreaViewport className=''>
+                <ScrollAreaViewport>
                     <div className="w-full h-50 aspect-video mx-auto mt-12 mb-0">
+
+                        {/* Leaderboard */}
                         <ResponsiveContainer initialDimension={{ width: 100, height: 100 }} width='80%' className='mx-auto block relative pt-14 sm:pt-10.5'>
+                            
+                            {/* The Bar */}
                             <BarChart data={leaderboardData} barCategoryGap={0}>
                                 <Bar
                                     dataKey="rank"
@@ -64,9 +72,12 @@ export default function MatchHomeLeaderboardUserComponent({ playersRecord }: { p
                                 >
                                 </Bar>
                             </BarChart>
-                            <div className='absolute w-full flex -top-8 left-0'>
-                                <div className='font-bold flex flex-col items-center w-1/3 mt-11 sm:mt-13'>
 
+                            {/* The container for bar labels - absolute, bounded by the bar chart container */}
+                            <div className='absolute w-full flex -top-8 left-0'>
+
+                                {/* Container for 2nd-place player */}
+                                <div className='font-bold flex flex-col items-center w-1/3 mt-11 sm:mt-13'>
                                     <Image
                                         height={60}
                                         width={60}
@@ -82,6 +93,7 @@ export default function MatchHomeLeaderboardUserComponent({ playersRecord }: { p
                                     </p>
                                 </div>
 
+                                {/* Container for 1st-place player */}
                                 <div className='font-bold flex flex-col items-center w-1/3'>
                                     <Image
                                         height={60}
@@ -99,6 +111,7 @@ export default function MatchHomeLeaderboardUserComponent({ playersRecord }: { p
                                     </p>
                                 </div>
 
+                                {/* Container for 3rd-place player */}
                                 <div className='font-bold flex flex-col items-center w-1/3 mt-22 sm:mt-25'>
                                     <Image
                                         height={60}
@@ -118,6 +131,7 @@ export default function MatchHomeLeaderboardUserComponent({ playersRecord }: { p
                         </ResponsiveContainer>
                     </div>
 
+                    {/* Leaderboard table */}
                     <div className='mx-2'>
                         <TableRoot className="w-full px-4 dark:border-white p-0">
                             <TableHeader>
