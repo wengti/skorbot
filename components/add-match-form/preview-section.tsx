@@ -9,7 +9,7 @@ import { TableBody, TableCell, TableHead, TableHeader, TableRoot, TableRow } fro
 import { FaGear } from "react-icons/fa6";
 
 
-export default function PreviewSection({ preview, roomParticipants, showEstimation = true }: { preview: PreviewType, roomParticipants: ClientUserContextType[], showEstimation: boolean }) {
+export default function PreviewSection({ preview, roomParticipants, showEstimation = true }: { preview: PreviewType, roomParticipants: ClientUserContextType[], showEstimation?: boolean }) {
 
     const { flatFullResult, profile } = preview
 
