@@ -69,11 +69,12 @@ export default function PreviewSection({ preview, roomParticipants, showEstimati
                         </div>
 
                         {/* Schedule */}
-                        <div className='flex flex-wrap justify-center'>
+                        <div className='flex flex-wrap justify-center w-55 mx-auto'>
                             {
                                 profile[playerId].schedule.map((entry, idx) => {
-                                    if (entry === 'o') return <MdOutlineCheckBox key={idx} className='text-green-500 text-xl' />
-                                    else return <MdOutlineCheckBoxOutlineBlank key={idx} className='text-gray-500 text-xl' />
+                                    const hasGap = (idx+1)%5 === 0 ? 'mr-2' : ''
+                                    if (entry === 'o') return <MdOutlineCheckBox  key={idx} className = {`text-green-500 text-xl ${hasGap}`} />                        
+                                    else return <MdOutlineCheckBoxOutlineBlank key={idx} className={`text-gray-500 text-xl ${hasGap}`} />
                                 })
                             }
                         </div>

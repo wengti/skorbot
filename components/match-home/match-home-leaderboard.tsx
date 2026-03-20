@@ -1,33 +1,12 @@
 import { MdLeaderboard } from "react-icons/md";
-import MatchHomeLeaderboardComponent from "./match-home-leaderboard-component";
 import { PlayersDataType, ResultDataType } from "@/app/user/rooms/[roomId]/match/[matchId]/page";
-import { ClientUserContextType } from "@/type/auth-type";
 import { redirect } from "next/navigation";
+import MatchHomeLeaderboardServerComponent from "./match-home-leaderboard-server-component";
 
 
-type PlayersRecordType = {
-    user: ClientUserContextType
-    wins: number
-    losses: number
-    scoreDiff: number
-}
+
 
 export default async function MatchHomeLeaderboard({ playersData, resultData }: { playersData: PlayersDataType[], resultData: ResultDataType[] }) {
-
-    const playersRecord = playersData.map( data => {
-        return ({
-            user: data.users,
-            wins: 0,
-            losses: 0,
-            scoreDiff: 0
-        })
-    })
-
-    for (const {player_a1, player_a2, player_b1, player_b2, score_a, score_b} of resultData){
-
-        const diff = score_a - score_b
-        // if(score_a > score_b)
-    }
 
     try {
         return (
@@ -36,7 +15,7 @@ export default async function MatchHomeLeaderboard({ playersData, resultData }: 
                     <MdLeaderboard />
                     <h2>Leaderboard</h2>
                 </div>
-                <MatchHomeLeaderboardComponent />
+                <MatchHomeLeaderboardServerComponent playersData={playersData} resultData={resultData}/>
             </section>
         )
     }

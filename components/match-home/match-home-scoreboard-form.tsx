@@ -8,6 +8,7 @@ import { RealtimeChannel } from "@supabase/supabase-js";
 import { getUserData } from "@/lib/auth-utils";
 import { useClientUserContext } from "@/context/client-user-context-provider";
 import { LiaStarSolid } from "react-icons/lia";
+import { useRouter } from "next/navigation";
 
 /* Payload - Returned data type upon receving an update from the subscribed table */
 /* Used to sync all users/devices on the latest score */
@@ -45,6 +46,10 @@ export default function MatchHomeScoreboardForm({ resultData, playersData, idx, 
 
     /* Ref - channel to subscribe to database */
     const channel = useRef<RealtimeChannel | null>(null)
+
+    /* Router */
+    const router = useRouter()
+
 
 
     /* Function - to handle score change */
@@ -144,6 +149,7 @@ export default function MatchHomeScoreboardForm({ resultData, playersData, idx, 
         setScoreA(payload.payload.record.score_a)
         setScoreB(payload.payload.record.score_b)
         setIsLocked(payload.payload.record.is_locked)
+        router.refresh()
     }
 
 
