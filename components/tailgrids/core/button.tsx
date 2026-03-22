@@ -39,7 +39,7 @@ export const buttonStyles = cva(
         appearance: "outline",
         // Disabled styles
         className:
-          "disabled:opacity-50"
+          "disabled:bg-button-outline-disabled-background border disabled:border-button-outline-disabled-border disabled:text-button-outline-disabled-text"
       },
       {
         variant: "primary",
