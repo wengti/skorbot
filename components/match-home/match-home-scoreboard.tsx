@@ -12,7 +12,8 @@ export default function MatchHomeScoreboard({ matchData, playersData, resultData
 
     /* state - pagination */
     const [currentPage, setCurrentPage] = useState<number>(1)
-    const totalPages = Math.ceil(resultData.length / 3)
+    const itemsPerPage = 3
+    const totalPages = Math.ceil(resultData.length / itemsPerPage)
 
 
 
@@ -31,7 +32,7 @@ export default function MatchHomeScoreboard({ matchData, playersData, resultData
 
                 {/* The individual form / scoreboard for each match */}
                 <div className='flex flex-col gap-2 items-center justify-center my-4 grow'>
-                    {resultData.slice((currentPage - 1) * 3, (currentPage - 1) * 3 + 3).map((data, idx) => <MatchHomeScoreboardForm resultData={data} idx={idx} key={data.id} playersData={playersData} tableName={tableName} matchData={matchData} />)}
+                    {resultData.map((data, idx) => <MatchHomeScoreboardForm resultData={data} idx={idx} key={data.id} playersData={playersData} tableName={tableName} matchData={matchData} currentPage={currentPage} itemsPerPage={itemsPerPage}/>)}
                 </div>
 
                 {/* Pagination */}

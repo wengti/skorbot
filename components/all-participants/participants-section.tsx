@@ -4,26 +4,62 @@ import { Avatar } from "../tailgrids/core/avatar";
 import { FaCrown } from "react-icons/fa6";
 import { useClientUserContext } from "@/context/client-user-context-provider";
 import { IoPeopleSharp } from "react-icons/io5";
+import { createClient } from "@/lib/supabase/client";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { MdOutlineClear } from "react-icons/md";
 
-export default function ParticipantsSection({ isParticipants, participants }: { isParticipants:boolean, participants: ClientUserContextType[] }) {
+export default function ParticipantsSection({ isParticipants, participants, roomId, owners }: { isParticipants: boolean, participants: ClientUserContextType[], roomId: string, owners: ClientUserContextType[] }) {
+
+
+    const [error, setError] = useState<Error | null>(null)
 
     const currentUser = useClientUserContext()
+    const isCurrentUserOwner = owners.map(owner => owner.id).includes(currentUser.id)
+
+    const router = useRouter()
+
+
+    /* Triggered when a participant is removed */
+    async function handleRemoveParticipant(entry: ClientUserContextType) {
+        try {
+            /* Disallow move for making a room to have less than 3 participants */
+            if (participants.length <= 3) {
+                throw new Error('Cannot have less than 3 participants in a room')
+            }
+
+            const supabase = createClient()
+            const response = await supabase
+                .from('room_participants')
+                .delete()
+                .eq('room', roomId)
+                .eq('participant', entry.id)
+                .eq('is_owner', false)
+            router.refresh()
+        }
+        catch (error) {
+            if (error instanceof Error) setError(error)
+            else setError(new Error('Unknown Error in removing participant from the room'))
+        }
+    }
 
     const participantsList = participants.map(participant => {
         const participantName = participant.id === currentUser.id ? 'You' : participant.name
         return (
-            <Avatar
-                key={participant.id}
-                src={participant.picture}
-                alt={`The profile picture of ${participantName}`}
-                fallback={participant.name.slice(0, 1)}
-                size='lg'
-                label={{
-                    title: participantName,
-                    subtitle: participant.email
-                }}
-                className='bg-(--color-pale) dark:bg-(--color-dark-pale) pr-6 pl-4 py-2 w-62.5 rounded-full'
-            />
+            <div className="flex relative" key={participant.id}>
+                { isCurrentUserOwner && isParticipants && <MdOutlineClear className="text-lg absolute right-4 top-2" onClick={() => { handleRemoveParticipant(participant) }} />}
+                <Avatar
+                    src={participant.picture}
+                    alt={`The profile picture of ${participantName}`}
+                    fallback={participant.name.slice(0, 1)}
+                    size='lg'
+                    label={{
+                        title: participantName,
+                        subtitle: participant.email
+                    }}
+                    className='bg-(--color-pale) dark:bg-(--color-dark-pale) pr-6 pl-4 py-2 w-62.5 rounded-full'
+                />
+            </div>
         )
     })
 

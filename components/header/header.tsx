@@ -6,7 +6,7 @@ import HeaderAuthBtn from "./header-auth-btn/header-auth-btn";
 export default async function Header() {
 
     return (
-        <header className="bg-(--color-banner) dark:bg-(--color-dark-banner) p-2 h-(--header-height) sm:px-12 sticky md:relative top-0 z-3">
+        <header className="bg-(--color-banner) dark:bg-(--color-dark-banner) p-2 h-(--header-height) sm:px-12 md:relative top-0 z-3 sticky">
             <nav className='flex justify-between items-center list-none'>
                 <li>
                     <Link href='/'>

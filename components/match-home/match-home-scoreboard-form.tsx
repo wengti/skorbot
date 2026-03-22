@@ -9,6 +9,7 @@ import { getUserData } from "@/lib/auth-utils";
 import { useClientUserContext } from "@/context/client-user-context-provider";
 import { LiaStarSolid } from "react-icons/lia";
 import { useRouter } from "next/navigation";
+import { NumberFieldProps } from "react-aria-components";
 
 /* Payload - Returned data type upon receving an update from the subscribed table */
 /* Used to sync all users/devices on the latest score */
@@ -27,7 +28,7 @@ function shortenName(name: string): string {
     return name.length > 11 ? name.slice(0, 9) + '..' : name
 }
 
-export default function MatchHomeScoreboardForm({ resultData, playersData, idx, tableName, matchData }: { resultData: ResultDataType, playersData: PlayersDataType[], idx: number, tableName: string, matchData: MatchDataType }) {
+export default function MatchHomeScoreboardForm({ resultData, playersData, idx, tableName, matchData, currentPage, itemsPerPage }: { resultData: ResultDataType, playersData: PlayersDataType[], idx: number, tableName: string, matchData: MatchDataType, currentPage: number, itemsPerPage: number }) {
 
     /* State - scoreboard variable */
     /* --- Using the initial fetched data as the starting state --- */
@@ -38,6 +39,34 @@ export default function MatchHomeScoreboardForm({ resultData, playersData, idx, 
     /* State - Error variable */
     const [error, setError] = useState<Error | null>(null)
 
+    /* Router */
+    const router = useRouter()
+
+
+
+    /* Effect subscribe to the database */
+    useEffect(() => {
+
+        async function subscribeToResultRow() {
+            const supabase = createClient()
+            await supabase.realtime.setAuth()
+
+            channel.current = supabase
+                .channel(`topic:${resultData.id}`, { config: { private: true } })
+                .on('broadcast', { event: 'UPDATE' }, (payload) => { setLatestResultData(payload as unknown as PayloadType) })
+                .subscribe()
+
+        }
+        subscribeToResultRow()
+
+        return () => {
+            if (channel.current) {
+                channel.current.unsubscribe()
+                channel.current = null
+            }
+        }
+    }, [])
+
     /* Ref - Debounce Timer: to prevent frequent communication with database */
     /* Only fire off the changes to the database after the user stop changing for a fixed amount of time (500ms) */
     const debounceTimerA = useRef<NodeJS.Timeout>(undefined!)
@@ -47,10 +76,13 @@ export default function MatchHomeScoreboardForm({ resultData, playersData, idx, 
     /* Ref - channel to subscribe to database */
     const channel = useRef<RealtimeChannel | null>(null)
 
-    /* Router */
-    const router = useRouter()
-
-
+    /* Function - Respond to subscribed table's changes by sync with the state */
+    function setLatestResultData(payload: PayloadType) {
+        setScoreA(payload.payload.record.score_a)
+        setScoreB(payload.payload.record.score_b)
+        setIsLocked(payload.payload.record.is_locked)
+        router.refresh()
+    }
 
     /* Function - to handle score change */
     async function handleScoreChange(event: ChangeEvent<HTMLInputElement, HTMLInputElement>, team: string, scoreState: number, setScore: Dispatch<SetStateAction<number>>) {
@@ -144,36 +176,10 @@ export default function MatchHomeScoreboardForm({ resultData, playersData, idx, 
         }, 500)
     }
 
-    /* Function - Respond to subscribed table's changes by sync with the state */
-    function setLatestResultData(payload: PayloadType) {
-        setScoreA(payload.payload.record.score_a)
-        setScoreB(payload.payload.record.score_b)
-        setIsLocked(payload.payload.record.is_locked)
-        router.refresh()
-    }
 
 
-    /* Effect subscribe to the database */
-    useEffect(() => {
-        async function subscribeToResultRow() {
-            const supabase = createClient()
-            await supabase.realtime.setAuth()
 
-            channel.current = supabase
-                .channel(`topic:${resultData.id}`, { config: { private: true } })
-                .on('broadcast', { event: 'UPDATE' }, (payload) => { setLatestResultData(payload as unknown as PayloadType) })
-                .subscribe()
 
-        }
-        subscribeToResultRow()
-
-        return () => {
-            if (channel.current) {
-                channel.current.unsubscribe()
-                channel.current = null
-            }
-        }
-    }, [])
 
 
     /* ---------------------------------- */
@@ -237,12 +243,22 @@ export default function MatchHomeScoreboardForm({ resultData, playersData, idx, 
         playerB2Name = shortenName(playerB2.name)
     }
 
+
+    /* Class Name */
+    /* Decide whether to show or not based on the navigate page */
+    const lowerBound = (currentPage - 1) * (itemsPerPage)
+    const upperBound = ((currentPage - 1) * (itemsPerPage) + itemsPerPage) - 1
+    let showClsName = ''
+    if (!(idx >= lowerBound && idx <= upperBound)) {
+        showClsName = 'hidden'
+    }
+
     /* ------------------ */
     /* Returned Component */
     /* ------------------ */
     return (
         /* Outer scoreboard section - to house error */
-        <div className='w-72.5 bg-(--color-pale) dark:bg-(--color-dark-pale) rounded-xl px-2 pt-8 pb-4 relative'>
+        <div className={`w-72.5 bg-(--color-pale) dark:bg-(--color-dark-pale) rounded-xl px-2 pt-8 pb-4 relative ${showClsName}`}>
 
             {/* Inner scoreboard section */}
             <div className='flex gap-1 justify-between'>
@@ -260,8 +276,8 @@ export default function MatchHomeScoreboardForm({ resultData, playersData, idx, 
                     {/* Lock action props */}
                     {
                         isLocked ?
-                        <FaLock onClick={() => handleLock()} className={`${lockClsNameIfNotOwner}`}/> :
-                        <FaLockOpen onClick={() => handleLock()} className={`${lockClsNameIfNotOwner}`}/>
+                            <FaLock onClick={() => handleLock()} className={`${lockClsNameIfNotOwner}`} /> :
+                            <FaLockOpen onClick={() => handleLock()} className={`${lockClsNameIfNotOwner}`} />
                     }
 
                     {/* Score division */}

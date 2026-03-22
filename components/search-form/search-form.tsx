@@ -1,7 +1,7 @@
 'use client'
 import { searchUsers } from "@/lib/search-utils";
 import { SearchType } from "@/type/search-type";
-import { ChangeEvent, Dispatch, JSX, SetStateAction, Suspense, useEffect, useState } from "react"
+import { ChangeEvent, Dispatch, JSX, SetStateAction, Suspense, useEffect, useRef, useState } from "react"
 import { FaMagnifyingGlass } from "react-icons/fa6";
 import { Avatar } from "../tailgrids/core/avatar";
 import { ScrollArea, ScrollAreaViewport, ScrollBar } from "../tailgrids/core/scroll-area";
@@ -14,6 +14,7 @@ import { useClientUserContext } from "@/context/client-user-context-provider";
 import { FaCrown } from "react-icons/fa";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { RealtimeChannel } from "@supabase/supabase-js";
 
 
 type SearchFormPropsType = {
@@ -39,7 +40,10 @@ export default function SearchForm({ participants, setParticipants, isPending = 
     /* Router */
     const router = useRouter()
 
-    /* Effect */
+    /* Ref */
+    const channel = useRef<RealtimeChannel | null>(null)
+
+    /* Effect - resetting the search form for new participants after the room have been created*/
     useEffect(() => {
         if (isSubmitted) {
             setSearchVal('')
@@ -47,8 +51,58 @@ export default function SearchForm({ participants, setParticipants, isPending = 
         }
     }, [isSubmitted])
 
+    /* Subscribe to if there's any room participant changes */
+    useEffect(() => {
+
+        if (channel.current) {
+            channel.current.unsubscribe()
+            channel.current = null
+        }
+
+        async function subscribeToRPchanges() {
+            const supabase = createClient()
+            await supabase.realtime.setAuth() // Needed for Realtime Authorization
+            channel.current = supabase
+                .channel(`topic-rp:${roomId}`, { config: { private: true } })
+                .on('broadcast', { event: '*' }, () => handleRPChangesinDB())
+                .subscribe()
+        }
+
+        subscribeToRPchanges()
+
+
+    }, [])
+
 
     /* Function */
+    /* Handle new user in db */
+    async function handleRPChangesinDB() {
+        console.log('Trig')
+        const supabase = createClient()
+        const { data: RPData, error: RPError } = await supabase
+            .from('room_participants')
+            .select(`
+                participant,
+                users(
+                 id, name, email, picture)
+                `
+            )
+            .eq('room', roomId)
+        if (RPError) {
+            setDatabaseUserError(Error(RPError.message))
+            return
+        }
+        else if (RPData === null) {
+            setDatabaseUserError(Error('Unable to update the participant list according to the latest update in the database.'))
+            return
+        }
+
+        const newParticipants = RPData.map((data) => data.users) as unknown as ClientUserContextType[]
+        setParticipants(newParticipants)
+
+    }
+
+
     /* Triggered when a search input is changed */
     function handleSearchChange(event: ChangeEvent<HTMLInputElement, HTMLInputElement>) {
 
@@ -93,13 +147,13 @@ export default function SearchForm({ participants, setParticipants, isPending = 
                         .insert({ room: roomId, participant: entry.id, is_owner: false })
                     if (error) throw new Error(error.message)
                     router.refresh()
-                    
+
                 }
 
                 /* This code block is run for when creating new room AND when adding new user to an existing room */
                 /* This is for self maintained state, without having to keep query from database to get the latest participant list */
                 const alreadyExists = participants.some(p => p.id === entry.id) // check whether this entry is already part of the participant list to prevent duplication
-                const newParticipants = alreadyExists ? participants : [...participants, entry] 
+                const newParticipants = alreadyExists ? participants : [...participants, entry]
                 setParticipants(newParticipants)
                 const result = await searchUsers(searchVal, newParticipants)
                 setSearchRes(result)
@@ -145,6 +199,8 @@ export default function SearchForm({ participants, setParticipants, isPending = 
                 /* This is for self maintained state, without having to keep query from database to get the latest participant list */
                 const newParticipants = participants.filter(p => p.id !== entry.id)
                 setParticipants(newParticipants)
+
+
                 /* Only update search result if there's no search value */
                 if (searchVal !== '') {
                     const result = await searchUsers(searchVal, newParticipants)
@@ -199,7 +255,7 @@ export default function SearchForm({ participants, setParticipants, isPending = 
                 <div className="flex relative items-center hover:cursor-pointer" key={id}>
                     {/* If the user is the owner of this room, he can remove anyone but the first user which is admin */}
                     {
-                        currentUser.id === ownerId && idx !== 0 &&
+                        currentUser.id === ownerId && participant.id !== ownerId &&
                         <MdOutlineClear className="text-lg" onClick={() => { handleRemoveParticipant(participant) }} />
                     }
                     {/* If the user is the owner of this room, he has a crown next to his name */}

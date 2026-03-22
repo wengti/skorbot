@@ -85,7 +85,7 @@ export default function AddMatchForm({ roomParticipants, roomId }: { roomPartici
 
     /* Returned Form Component */
     return (
-        <>
+        <section className='w-full flex flex-col'>
             <div className='flex justify-center'>
 
                 {/* Form */}
@@ -139,12 +139,12 @@ export default function AddMatchForm({ roomParticipants, roomId }: { roomPartici
             </div>
 
             {/* Preview Section */}
-            <div ref={previewSection}>
+            <div ref={previewSection} className='lg-100'>
                 {
                     preview &&
                     <PreviewSection preview={preview} roomParticipants={roomParticipants} />
                 }
             </div>
-        </>
+        </section>
     )
 }

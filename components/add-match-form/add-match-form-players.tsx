@@ -32,7 +32,7 @@ export default function AddMatchFormPlayers({ roomParticipants, players, setPlay
                         size="sm"
                         onClick={() => setPlayers([])}
                         disabled={players.length === 0}
-                        className='bg-(--color-pale) dark:bg-(--color-dark-pale) text-black dark:text-(--color-dark-text) dark:border-(--color-dark-text)'
+                        className='bg-(--color-pale) dark:bg-(--color-dark-pale) text-black dark:text-(--color-dark-text) dark:border-(--color-dark-text) disabled:bg-(--color-pale) dark:disabled:bg-(--color-dark-pale) disabled:text-black dark:disabled:text-(--color-dark-text)'
                     >
                         Clear Selection
                     </Button>
