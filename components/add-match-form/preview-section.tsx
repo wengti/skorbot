@@ -7,10 +7,14 @@ import { Avatar } from "../tailgrids/core/avatar";
 import { TbSwords } from "react-icons/tb";
 import { TableBody, TableCell, TableHead, TableHeader, TableRoot, TableRow } from "../tailgrids/core/table";
 import { FaGear } from "react-icons/fa6";
+import PreviewPagination from "./preview-pagination";
 
 
 export default function PreviewSection({ preview, roomParticipants, showEstimation = true }: { preview: PreviewType, roomParticipants: ClientUserContextType[], showEstimation?: boolean }) {
 
+    
+
+    /* Destructure preview */
     const { flatFullResult, profile } = preview
 
     /* Creating an array of cards for each player */
@@ -72,8 +76,8 @@ export default function PreviewSection({ preview, roomParticipants, showEstimati
                         <div className='flex flex-wrap justify-center w-55 mx-auto'>
                             {
                                 profile[playerId].schedule.map((entry, idx) => {
-                                    const hasGap = (idx+1)%5 === 0 ? 'mr-2' : ''
-                                    if (entry === 'o') return <MdOutlineCheckBox  key={idx} className = {`text-green-500 text-xl ${hasGap}`} />                        
+                                    const hasGap = (idx + 1) % 5 === 0 ? 'mr-2' : ''
+                                    if (entry === 'o') return <MdOutlineCheckBox key={idx} className={`text-green-500 text-xl ${hasGap}`} />
                                     else return <MdOutlineCheckBoxOutlineBlank key={idx} className={`text-gray-500 text-xl ${hasGap}`} />
                                 })
                             }
@@ -100,7 +104,7 @@ export default function PreviewSection({ preview, roomParticipants, showEstimati
 
     /* Full Element to be returned */
     return (
-        <section className='mt-4 mb-4'>
+        <section className='mt-4 mb-4 w-full'>
 
             {/* Title */}
             <div className="text-xl font-bold mb-2 flex gap-2 items-center">
@@ -108,26 +112,21 @@ export default function PreviewSection({ preview, roomParticipants, showEstimati
                 <p>Game Profile Preview</p>
             </div>
 
-            {/* Scroll Area */}
-            <ScrollArea className="w-full h-250 sm:h-200 md:h-150 border px-2 py-4 rounded-xl">
-                <ScrollAreaViewport className="">
+            {/* Inner Container */}
+            <div className="w-full border px-2 py-4 rounded-xl">
 
-                    {/* Total number of matches */}
-                    {
-                        showEstimation && 
-                        <div className='flex gap-2 items-center font-bold text-xl mb-4'>
-                            <FaGear />
-                            <p>{flatFullResult.length} Matches | Estimated Playtime: {flatFullResult.length * 15} mins</p>
-                        </div>
-                    }
-
-                    {/* Card Grid */}
-                    <div className='grid grid-cols-[repeat(auto-fill,300px)] gap-2 justify-center'>
-                        {previewCards}
+                {/* Total number of matches */}
+                {
+                    showEstimation &&
+                    <div className='flex gap-2 items-center font-bold text-xl mb-4'>
+                        <FaGear />
+                        <p>{flatFullResult.length} Matches | Estimated Playtime: {flatFullResult.length * 15} mins</p>
                     </div>
-                </ScrollAreaViewport>
-                <ScrollBar orientation="vertical" />
-            </ScrollArea>
+                }
+
+                {/* The preview cards and pagination */}
+                <PreviewPagination previewCards={previewCards} />
+            </div>
         </section>
     )
 }

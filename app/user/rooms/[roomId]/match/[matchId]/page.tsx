@@ -112,7 +112,15 @@ export default async function MatchHomePage({ params }: { params: Promise<{ room
                         <MatchHomeLeaderboard playersData={playersData} resultData={resultData}/>
                     </div>
                 </div>
-                <MatchHomePreview matchData={matchData[0]} playersData={playersData} />
+                <div className='lg:flex lg:gap-2'>
+                    <div className='lg:w-5/11'>
+                        <MatchHomePreview matchData={matchData[0]} playersData={playersData} />
+                    </div>
+                    <div className='lg:w-6/11'>
+                        
+                    </div>
+                </div>
+                
             </>
         )
     }
