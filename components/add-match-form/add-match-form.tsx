@@ -32,6 +32,9 @@ export default function AddMatchForm({ roomParticipants, roomId }: { roomPartici
     const [maxLength, setMaxLength] = useState<number>(0)
     const [note, setNote] = useState<string>('')
 
+    /* state - Form Key */
+    const [formKey, setFormKey] = useState<number>(0)
+
     /* State - Preview */
     const [preview, setPreview] = useState<PreviewType>(null!)
 
@@ -43,6 +46,7 @@ export default function AddMatchForm({ roomParticipants, roomId }: { roomPartici
 
     /* Action State  */
     const [state, formAction, isPending] = useActionState(async () => {
+        setFormKey( (p) => p+1)
         const castPlayers = players as string[]
         const {errorState, matchId} =  await createANewMatch({
             room: roomId,
@@ -91,7 +95,7 @@ export default function AddMatchForm({ roomParticipants, roomId }: { roomPartici
                 {/* Form */}
                 <Form action={formAction} className='flex flex-col gap-2 py-2 px-2 max-w-200 grow'>
                     <FormEntry index={1}>
-                        <AddMatchFormPlayers roomParticipants={roomParticipants} players={players} setPlayers={setPlayers} />
+                        <AddMatchFormPlayers roomParticipants={roomParticipants} players={players} setPlayers={setPlayers} formKey={formKey}/>
                     </FormEntry>
                     <FormEntry index={2}>
                         <AddMatchFormTeamConfig teamConfig={teamConfig} setTeamConfig={setTeamConfig} isPending={isPending} />

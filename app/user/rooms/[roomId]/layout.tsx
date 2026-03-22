@@ -1,4 +1,4 @@
-import RoomHomeSearchForm from "@/components/room-home/room-home-search-form"
+import RoomHomeSearchForm from "@/components/room-home/room-home-participants"
 import RoomHomeTitle from "@/components/room-home/room-home-title"
 import { createClient } from "@/lib/supabase/server"
 import { RoomDataType } from "@/type/room-data-type"

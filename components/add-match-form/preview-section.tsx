@@ -12,10 +12,12 @@ import PreviewPagination from "./preview-pagination";
 
 export default function PreviewSection({ preview, roomParticipants, showEstimation = true }: { preview: PreviewType, roomParticipants: ClientUserContextType[], showEstimation?: boolean }) {
 
-    
-
     /* Destructure preview */
     const { flatFullResult, profile } = preview
+
+    /* Class Name for cell rows */
+    const headerClsName = 'text-black font-bold dark:text-(--color-dark-text) p-1.5 sm:text-base'
+    const rowClsName = 'text-black font-bold dark:text-(--color-dark-text) text-xs p-1.5 sm:text-base'
 
     /* Creating an array of cards for each player */
     let previewCards = []
@@ -28,9 +30,9 @@ export default function PreviewSection({ preview, roomParticipants, showEstimati
 
             return (
                 <TableRow key={otherPlayer?.id}>
-                    <TableCell className='text-black dark:text-(--color-dark-text)'>{otherPlayerName}</TableCell>
-                    <TableCell className='text-black dark:text-(--color-dark-text)'>{profile[playerId].teammate[otherPlayerId]}</TableCell>
-                    <TableCell className='text-black dark:text-(--color-dark-text)'>{profile[playerId].opponent[otherPlayerId]}</TableCell>
+                    <TableCell className={`${rowClsName}`}>{otherPlayerName}</TableCell>
+                    <TableCell className={`${rowClsName}`}>{profile[playerId].teammate[otherPlayerId]}</TableCell>
+                    <TableCell className={`${rowClsName}`}>{profile[playerId].opponent[otherPlayerId]}</TableCell>
                 </TableRow>
             )
         })
@@ -88,9 +90,9 @@ export default function PreviewSection({ preview, roomParticipants, showEstimati
                     <TableRoot className='dark:border-(--color-dark-text)'>
                         <TableHeader>
                             <TableRow className='text-black dark:text-(--color-dark-text)'>
-                                <TableHead>Player</TableHead>
-                                <TableHead>Team</TableHead>
-                                <TableHead>VS</TableHead>
+                                <TableHead className={`${headerClsName}`}>Player</TableHead>
+                                <TableHead className={`${headerClsName}`}>Team</TableHead>
+                                <TableHead className={`${headerClsName}`}>VS</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>

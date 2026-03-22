@@ -17,11 +17,12 @@ export default function PreviewPagination({previewCards}: {previewCards: JSX.Ele
             </div >
 
             {/* Pagination */}
-            < div className='my-2 mx-2' >
+            < div className='my-2' >
                 <Pagination
                     currentPage={currentPage}
                     totalPages={totalPages}
                     onPageChange={(page) => { setCurrentPage(page) }}
+                    sideLayout="icon"
                 />
             </div >
         </>

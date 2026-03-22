@@ -17,6 +17,10 @@ export async function createANewMatch({ room, players, team_config, num_of_round
 
     try {
         /* Data sanitization */
+        if(players.length < 2) {
+            throw new Error('Not enough player. Must hae at least two.')
+        }
+
         if (players.length < 4 && team_config === 'two') {
             throw new Error('Not enough player to set up for 2v2.')
         }

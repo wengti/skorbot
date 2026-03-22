@@ -36,8 +36,8 @@ export default async function AllParticipantsPage({ params }: { params: Promise<
 
         return (
             <section className='flex flex-col gap-4'>
-                <ParticipantsSection isParticipants={false} participants={owners} roomId={roomId} owners={owners}/>
-                <ParticipantsSection isParticipants={true} participants={participants} roomId={roomId} owners={owners}/>
+                <ParticipantsSection isParticipants={false} initParticipants={owners} roomId={roomId} owners={owners}/>
+                <ParticipantsSection isParticipants={true} initParticipants={participants} roomId={roomId} owners={owners}/>
             </section>
         )
 

@@ -81,7 +81,7 @@ export default function MatchHomeScoreboardForm({ resultData, playersData, idx, 
         setScoreA(payload.payload.record.score_a)
         setScoreB(payload.payload.record.score_b)
         setIsLocked(payload.payload.record.is_locked)
-        router.refresh()
+        router.refresh() /* Key to also refresh the leaderboard */
     }
 
     /* Function - to handle score change */

@@ -6,7 +6,7 @@ import { Key } from "react-aria-components";
 import { Dispatch, SetStateAction } from "react";
 import { ClientUserContextType } from "@/type/auth-type";
 
-export default function AddMatchFormPlayers({ roomParticipants, players, setPlayers }: { roomParticipants:ClientUserContextType[], players: Key[], setPlayers: Dispatch<SetStateAction<Key[]>> }) {
+export default function AddMatchFormPlayers({ roomParticipants, players, setPlayers, formKey }: { roomParticipants:ClientUserContextType[], players: Key[], setPlayers: Dispatch<SetStateAction<Key[]>>, formKey:number }) {
 
     const playerIdToName: Record<string,string> = {}
     const playerList = roomParticipants.map(participant => {
@@ -18,7 +18,7 @@ export default function AddMatchFormPlayers({ roomParticipants, players, setPlay
         )
     })
     return (
-        <>
+        <div key={formKey}>
             <div className='mb-2 font-bold text-xl flex gap-2 items-center'>
                 <IoPeopleSharp />
                 <p>Players</p>
@@ -52,6 +52,6 @@ export default function AddMatchFormPlayers({ roomParticipants, players, setPlay
                     </ComboboxContent>
                 </MultiCombobox>
             </div>
-        </>
+        </div>
     )
 }

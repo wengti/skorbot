@@ -36,11 +36,12 @@ export default function MatchHomeScoreboard({ matchData, playersData, resultData
                 </div>
 
                 {/* Pagination */}
-                <div className='my-2 mx-2'>
+                <div className='my-2 px-2'>
                     <Pagination
                         currentPage={currentPage}
                         totalPages={totalPages}
                         onPageChange={(page) => { setCurrentPage(page) }}
+                        sideLayout="icon"
                     />
                 </div>
             </div>

@@ -9,6 +9,7 @@ import { LiaStarSolid } from "react-icons/lia";
 import { ClientUserContextType } from "@/type/auth-type";
 import { cacheTag } from "next/cache";
 import RoomHomeNewMatchesBtn from "./room-home-new-matches-btn";
+import RoomHomeMatchesOverviewPagination from "./room-home-matches-overview-pagination";
 
 type MatchDataType = {
     id: string,
@@ -38,7 +39,7 @@ async function getMatchesData(roomId: string): Promise<MatchDataType[]> {
 }
 
 
-export default async function RoomHomeMatchesOverview({ roomId, roomParticipants, ownerId}: { roomId: string, roomParticipants: ClientUserContextType[], ownerId:string}) {
+export default async function RoomHomeMatchesOverview({ roomId, roomParticipants, ownerId }: { roomId: string, roomParticipants: ClientUserContextType[], ownerId: string }) {
 
 
     try {
@@ -52,11 +53,11 @@ export default async function RoomHomeMatchesOverview({ roomId, roomParticipants
         const matchesDisplay = matchData.map(data => {
 
             /* Creating the data needed for avatar group */
-            const avatarGroupData = data.players.slice(0, 5).map(player => {
+            const avatarGroupData = data.players.slice(0, 5).map((player, idx) => {
                 const playerData = roomParticipants.find(p => p.id === player)
                 return {
                     src: playerData ? playerData.picture : '/images/profile_inactive.png',
-                    alt: `The profile picture of ${playerData ? playerData.name : 'An inactive user'}.`
+                    alt: `The profile picture of ${playerData ? playerData.name : `An inactive user - ${idx}`}.`
                 }
             })
 
@@ -76,7 +77,7 @@ export default async function RoomHomeMatchesOverview({ roomId, roomParticipants
                         </div>
                         <div className='mt-2 flex gap-2 justify-center items-center font-bold text-md lg:text-xl'>
                             <AvatarGroup data={avatarGroupData} size='sm' />
-                            {data.players.length > 5 && <p className='-ml-1 text-sm'>+{data.players.length - 1}</p>}
+                            {data.players.length > 5 && <p className='-ml-1 text-sm'>+{data.players.length - 5}</p>}
                             <p className='border-l pl-1'>{data.team_config === 'one' ? '1v1' : '2v2'}</p>
                             <p className='border-l pl-1'>{data.length[0].toUpperCase() + data.length.slice(1)}</p>
                             <p className='border-l pl-1 hidden lg:block'>{data.num_of_rounds} round</p>
@@ -89,13 +90,20 @@ export default async function RoomHomeMatchesOverview({ roomId, roomParticipants
 
         /* Returned Element */
         return (
-            <ScrollArea className="h-130 w-full border my-2 rounded-lg">
-                <ScrollAreaViewport className="p-4 flex flex-col gap-2">
-                    <RoomHomeNewMatchesBtn ownerId={ownerId} roomId={roomId}/>
-                    {matchData.length > 0 ? matchesDisplay: <p className='text-gray-500 text-center'>No Result</p>}
-                </ScrollAreaViewport>
-                <ScrollBar orientation="vertical" />
-            </ScrollArea>
+            <div className="h-130 w-full mt-2 border rounded-lg flex flex-col ">
+                <div className='mt-2 mx-2'>
+                    <RoomHomeNewMatchesBtn ownerId={ownerId} roomId={roomId} />
+                </div>
+                <div className='grow'>
+                    {
+                        matchData.length > 0 ?
+                            <RoomHomeMatchesOverviewPagination>
+                                {matchesDisplay}
+                            </RoomHomeMatchesOverviewPagination> :
+                            <p className='text-gray-500 text-center'>No Result</p>
+                    }
+                </div>
+            </div>
         )
     }
     catch (error) {

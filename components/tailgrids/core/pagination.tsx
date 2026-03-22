@@ -49,7 +49,6 @@ export function Pagination({
   sideLayout = "full"
 }: PropsType) {
 
-  const clsName = ` bg-(--color-highlight) text-black dark:text-(--color-dark-text)`
   return (
     <nav
       role="navigation"

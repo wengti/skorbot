@@ -11,10 +11,7 @@ import { MdOutlineClear } from "react-icons/md";
 import { ClientUserContextType } from "@/type/auth-type";
 import { createClient } from "@/lib/supabase/client";
 import { useClientUserContext } from "@/context/client-user-context-provider";
-import { FaCrown } from "react-icons/fa";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { RealtimeChannel } from "@supabase/supabase-js";
 
 
 type SearchFormPropsType = {
@@ -26,7 +23,10 @@ type SearchFormPropsType = {
     ownerId?: string
 }
 
-export default function SearchForm({ participants, setParticipants, isPending = false, isSubmitted = false, roomId = '', ownerId = '' }: SearchFormPropsType) {
+export default function SearchForm({ participants, setParticipants, isPending = false, isSubmitted = false, roomId = '', ownerId = ''}: SearchFormPropsType) {
+    /* NOTE: This component is used in 2 places */
+    /* 1. Add New Room: Need isPending and isSubmitted */
+    /* 2. Room - All Participants: Need roomId and ownerId */
 
     /* State - Maintain internal state */
     const [searchVal, setSearchVal] = useState<string>('')
@@ -40,9 +40,6 @@ export default function SearchForm({ participants, setParticipants, isPending = 
     /* Router */
     const router = useRouter()
 
-    /* Ref */
-    const channel = useRef<RealtimeChannel | null>(null)
-
     /* Effect - resetting the search form for new participants after the room have been created*/
     useEffect(() => {
         if (isSubmitted) {
@@ -53,54 +50,8 @@ export default function SearchForm({ participants, setParticipants, isPending = 
 
     /* Subscribe to if there's any room participant changes */
     useEffect(() => {
-
-        if (channel.current) {
-            channel.current.unsubscribe()
-            channel.current = null
-        }
-
-        async function subscribeToRPchanges() {
-            const supabase = createClient()
-            await supabase.realtime.setAuth() // Needed for Realtime Authorization
-            channel.current = supabase
-                .channel(`topic-rp:${roomId}`, { config: { private: true } })
-                .on('broadcast', { event: '*' }, () => handleRPChangesinDB())
-                .subscribe()
-        }
-
-        subscribeToRPchanges()
-
-
+        router.refresh()
     }, [])
-
-
-    /* Function */
-    /* Handle new user in db */
-    async function handleRPChangesinDB() {
-        console.log('Trig')
-        const supabase = createClient()
-        const { data: RPData, error: RPError } = await supabase
-            .from('room_participants')
-            .select(`
-                participant,
-                users(
-                 id, name, email, picture)
-                `
-            )
-            .eq('room', roomId)
-        if (RPError) {
-            setDatabaseUserError(Error(RPError.message))
-            return
-        }
-        else if (RPData === null) {
-            setDatabaseUserError(Error('Unable to update the participant list according to the latest update in the database.'))
-            return
-        }
-
-        const newParticipants = RPData.map((data) => data.users) as unknown as ClientUserContextType[]
-        setParticipants(newParticipants)
-
-    }
 
 
     /* Triggered when a search input is changed */
@@ -158,8 +109,6 @@ export default function SearchForm({ participants, setParticipants, isPending = 
                 const result = await searchUsers(searchVal, newParticipants)
                 setSearchRes(result)
                 setDatabaseUserError(null)
-
-
             }
         }
         catch (error) {
@@ -172,11 +121,11 @@ export default function SearchForm({ participants, setParticipants, isPending = 
 
 
     /* Triggered when a participant is removed */
+    /* This action is only available for the search form in adding room */
+    /* For in room - all participants, a same function is written but move one level above */
     async function handleRemoveParticipant(entry: ClientUserContextType) {
         try {
             if (!isPending) {
-
-
 
                 /* Remove room participants from the database if Room Existed already */
                 if (isRoomExisting) {
@@ -242,33 +191,11 @@ export default function SearchForm({ participants, setParticipants, isPending = 
         })
     }
 
-    /* The added participants */
+    /* The added participants - only used in when creating a new room*/
     let participantsList: JSX.Element[] = []
 
-
     /* Different appearance of existing list depending on whether its used before or after the room exists */
-    if (isRoomExisting) {
-        participantsList = participants.slice(0, 10).map((participant, idx) => {
-            const { id, picture, name } = participant
-
-            return (
-                <div className="flex relative items-center hover:cursor-pointer" key={id}>
-                    {/* If the user is the owner of this room, he can remove anyone but the first user which is admin */}
-                    {
-                        currentUser.id === ownerId && participant.id !== ownerId &&
-                        <MdOutlineClear className="text-lg" onClick={() => { handleRemoveParticipant(participant) }} />
-                    }
-                    {/* If the user is the owner of this room, he has a crown next to his name */}
-                    {
-                        (id === ownerId) && <FaCrown className='text-md mr-1' />
-                    }
-                    <CustomAvatar id={id} picture={picture} name={name === currentUser.name ? 'You' : name} />
-
-                </div>
-            )
-        })
-    }
-    else {
+    if(!isRoomExisting) {
         participantsList = participants.map((participant, idx) => {
             const { id, picture, name } = participant
             return (
@@ -338,20 +265,12 @@ export default function SearchForm({ participants, setParticipants, isPending = 
 
             {/* Added Participants */}
             {
-                (isRoomExisting) ?
-                    <div className='mt-3 pt-6 pb-2 px-6 relative border rounded-lg'>
-                        <div className="flex gap-2 flex-wrap ">
-                            {participantsList}
-                        </div>
-                        <Link href={`/user/rooms/${roomId}/all-participants`}><p className='underline text-center'>See More</p></Link>
-                    </div> :
-                    <div className="my-2 flex gap-2 flex-wrap">
-                        {participantsList}
-                    </div>
+                !isRoomExisting ?
+                <div className="my-2 flex gap-2 flex-wrap">
+                    {participantsList}
+                </div> :
+                <div className='mb-4'></div>
             }
-
-
-
-        </div>
+        </div >
     )
 }

@@ -1,15 +1,17 @@
 import RoomHomeLeaderboard from "@/components/room-home/room-home-leaderboard"
 import RoomHomeMatchesOverview from "@/components/room-home/room-home-matches-overview"
-import RoomHomeSearchForm from "@/components/room-home/room-home-search-form"
+import RoomHomeParticipants from "@/components/room-home/room-home-participants"
 import { createClient } from "@/lib/supabase/server"
 import { RoomDataType } from "@/type/room-data-type"
 import { notFound, redirect } from "next/navigation"
+import { IoPeopleSharp } from "react-icons/io5"
 import { MdLeaderboard } from "react-icons/md"
 import { TbSwords } from "react-icons/tb"
 
 
 export default async function RoomHomePage({ params }: { params: Promise<{ roomId: string }> }) {
     try {
+
         /* Get room id */
         const { roomId } = await params
 
@@ -35,9 +37,15 @@ export default async function RoomHomePage({ params }: { params: Promise<{ roomI
 
         return (
             <>
-                {/* The search form */}
+                {/* The latest participants*/}
                 <section className='max-w-300 mx-auto'>
-                    <RoomHomeSearchForm initParticipants={roomData[0].room_participants.map(p => p.users)} roomId={roomId} ownerId={roomData[0].owner} />
+                    <section>
+                        <div className='text-xl font-bold mb-1 flex gap-2 items-center'>
+                            <IoPeopleSharp />
+                            <h2>Participants</h2>
+                        </div>
+                        <RoomHomeParticipants roomData={roomData}/>
+                    </section>
                 </section>
 
                 <section className='mt-4 max-w-300 mx-auto flex flex-col gap-4 md:flex-row md:gap-2'>
