@@ -25,7 +25,7 @@ export default async function MatchHomePaymenmt({ matchData, playersData, roomId
                 </div>
                 <div className="h-145 w-full border my-2 rounded-xl flex flex-col">
                     <div className="h-10 p-2 my-2">
-                        <div className='text-xl font-bold mb-1 flex gap-2 items-center'>
+                        <div className='text-lg sm:text-xl font-bold mb-1 flex gap-2 items-center'>
                             <CiStickyNote />
                             <h2>Note from the room owner:</h2>
                         </div>

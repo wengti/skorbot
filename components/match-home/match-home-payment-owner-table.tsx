@@ -7,11 +7,10 @@ import { ScrollArea, ScrollAreaViewport, ScrollBar } from "../tailgrids/core/scr
 import { IoMdCheckboxOutline } from "react-icons/io";
 import { MdCheckBoxOutlineBlank } from "react-icons/md";
 import { createClient } from "@/lib/supabase/client";
-import { useState } from "react";
+import { startTransition, useOptimistic, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Pagination } from "../tailgrids/core/pagination";
 import { TableBody, TableCell, TableHead, TableHeader, TableRoot, TableRow } from "../tailgrids/core/table";
-import { Spinner } from "../tailgrids/core";
 
 export default function MatchHomePaymentOwnerTable({ paymentData, playersData, baseUrl, matchData }: { paymentData: PaymentDataType[], playersData: PlayersDataType[], baseUrl: string, matchData: MatchDataType }) {
 
@@ -19,42 +18,69 @@ export default function MatchHomePaymentOwnerTable({ paymentData, playersData, b
     const [isPending, setIsPending] = useState<boolean>(false)
     const [currentPage, setCurrentPage] = useState<number>(1)
 
+    const [rawPaymentData, setRawPaymentData] = useState<PaymentDataType[]>(paymentData)
+    const [optimisticPaymentData, setOptimisticPaymentData] = useOptimistic<PaymentDataType[]>(rawPaymentData)
+
     const totalPages = paymentData.length + 1
 
     const router = useRouter()
 
     async function handleTogglePaymentStatus(matchId: string, playerId: string, newStatus: boolean) {
-        setIsPending(true)
-        const supabase = createClient()
-        const { error } = await supabase
-            .from('match_players')
-            .update({ has_paid: newStatus })
-            .eq('match', matchId)
-            .eq('player', playerId)
-        if (error) {
-            setIsPending(false)
-            setError(new Error(error.message))
-            return
-        }
-        setIsPending(false)
-        setError(null)
-        router.refresh()
+
+        startTransition(async () => {
+
+            setOptimisticPaymentData((prevData) => {
+                const newData = JSON.parse(JSON.stringify(prevData)) as unknown as PaymentDataType[]
+                const target = newData.find(d => d.player === playerId)
+                if (!target) return prevData
+                target.has_paid = newStatus
+                return newData
+            })
+
+            const supabase = createClient()
+            const { error } = await supabase
+                .from('match_players')
+                .update({ has_paid: newStatus })
+                .eq('match', matchId)
+                .eq('player', playerId)
+            if (error) {
+                setRawPaymentData((prevData) => prevData)
+                setError(new Error(error.message))
+                return
+            }
+
+            const { data: newPaymentData, error: newPaymentError } = await supabase
+                .from('match_players')
+                .select('player, file_name, has_paid')
+                .eq('match', matchData.id)
+                .neq('player', matchData.rooms.owner)
+                .order('player', { ascending: false })
+            if (newPaymentError) {
+                setRawPaymentData((prevData) => prevData)
+                setError(new Error(newPaymentError.message))
+                return
+            }
+
+            setRawPaymentData(newPaymentData)
+            setError(null)
+        })
     }
+
 
     let displayElement
     if (currentPage === 1) {
 
         const headerClsName = 'text-black font-bold dark:text-(--color-dark-text) p-1.5 sm:text-base'
-        const rowClsName = 'text-black font-bold dark:text-(--color-dark-text) text-xs p-1.5 py-3 sm:text-base'
+        const rowClsName = 'text-black font-bold dark:text-(--color-dark-text) text-xs p-1.5 py-2 sm:text-base'
 
-        const rows = paymentData.map((data, idx) => {
+        const rows = rawPaymentData.map((data, idx) => {
             const rawPlayerProfile = playersData.find(p => p.player === data.player)
             const playerProfile = rawPlayerProfile ? rawPlayerProfile.users : { id: String(Math.round(Math.random() * 1000)), name: 'Unknown', picture: '/images/profile_inactive.png', email: 'unknown@email.com' }
             const imgSrc = data.file_name ? `${baseUrl}/${data.player}/${data.file_name}` : ''
 
             return (
                 <TableRow key={playerProfile.id}>
-                    <TableCell className={`${rowClsName}`}>{idx+1}</TableCell>
+                    <TableCell className={`${rowClsName}`}>{idx + 1}</TableCell>
                     <TableCell className={`${rowClsName}`}>{playerProfile.name}</TableCell>
                     <TableCell className={`${rowClsName}`}>
                         {
@@ -67,11 +93,9 @@ export default function MatchHomePaymentOwnerTable({ paymentData, playersData, b
                     <TableCell className={`${rowClsName}`}>
                         <button onClick={() => { handleTogglePaymentStatus(matchData.id, playerProfile.id, !data.has_paid) }}>
                             {
-                                isPending ?
-                                    <Spinner size='sm'/> :
-                                    data.has_paid ?
-                                        <IoMdCheckboxOutline className='text-green-500' /> :
-                                        <MdCheckBoxOutlineBlank />
+                                data.has_paid ?
+                                    <IoMdCheckboxOutline className='text-green-500 text-xl' /> :
+                                    <MdCheckBoxOutlineBlank className='text-xl'/>
                             }
                         </button>
                     </TableCell>
@@ -104,7 +128,7 @@ export default function MatchHomePaymentOwnerTable({ paymentData, playersData, b
         )
     }
     else if (currentPage > 1) {
-        const data = paymentData[currentPage - 2]
+        const data = rawPaymentData[currentPage - 2]
         const rawPlayerProfile = playersData.find(p => p.player === data.player)
         const playerProfile = rawPlayerProfile ? rawPlayerProfile.users : { id: String(Math.round(Math.random() * 1000)), name: 'Unknown', picture: '/images/profile_inactive.png', email: 'unknown@email.com' }
         const imgSrc = data.file_name ? `${baseUrl}/${data.player}/${data.file_name}` : ''
@@ -151,11 +175,9 @@ export default function MatchHomePaymentOwnerTable({ paymentData, playersData, b
                 <div className='text-3xl text-center'>
                     <button onClick={() => { handleTogglePaymentStatus(matchData.id, playerProfile.id, !data.has_paid) }}>
                         {
-                            isPending ?
-                                <Spinner /> :
-                                data.has_paid ?
-                                    <IoMdCheckboxOutline className='text-green-500' /> :
-                                    <MdCheckBoxOutlineBlank />
+                            data.has_paid ?
+                                <IoMdCheckboxOutline className='text-green-500' /> :
+                                <MdCheckBoxOutlineBlank />
                         }
                     </button>
                 </div>

@@ -28,7 +28,7 @@ export default async function MatchHomePaymentNonOwner({ roomId, matchData, play
         const isThisPlayerInTheGame = matchData.players.includes(playerId)
 
         return (
-            <section className='p-2 font-bold text-xl grow flex flex-col justify-center mt-4'>
+            <section className='p-2 font-bold text-lg sm:text-xl grow flex flex-col justify-center mt-4'>
 
                 <div className='flex flex-col gap-2'>
                     <div className='flex gap-2 justify-between'>
