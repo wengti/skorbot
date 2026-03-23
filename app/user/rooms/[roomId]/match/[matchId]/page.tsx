@@ -1,4 +1,5 @@
 import MatchHomeLeaderboard from "@/components/match-home/match-home-leaderboard"
+import MatchHomePaymenmt from "@/components/match-home/match-home-payment"
 import MatchHomePreview from "@/components/match-home/match-home-preview"
 import MatchHomeScoreboard from "@/components/match-home/match-home-scoreboard"
 import MatchHomeTitle from "@/components/match-home/match-home-title"
@@ -117,7 +118,7 @@ export default async function MatchHomePage({ params }: { params: Promise<{ room
                         <MatchHomePreview matchData={matchData[0]} playersData={playersData} />
                     </div>
                     <div className='lg:w-6/11'>
-                        
+                        <MatchHomePaymenmt matchData={matchData[0]} playersData={playersData} roomId={roomId}/>
                     </div>
                 </div>
                 

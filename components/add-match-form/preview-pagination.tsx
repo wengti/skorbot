@@ -12,7 +12,7 @@ export default function PreviewPagination({previewCards}: {previewCards: JSX.Ele
     return (
         <>
             {/* Card Grid */}
-            < div className='flex gap-2 items-center justify-center' >
+            < div className='flex gap-2 items-center justify-center grow' >
                 { previewCards.slice( (currentPage-1)*itemsPerPage, (currentPage-1)*itemsPerPage+itemsPerPage) }
             </div >
 

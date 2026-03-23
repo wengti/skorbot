@@ -1,7 +1,6 @@
 'use client'
 import { MatchDataType, PlayersDataType, ResultDataType } from "@/app/user/rooms/[roomId]/match/[matchId]/page"
 import { TbSword } from "react-icons/tb"
-import { ScrollArea, ScrollAreaViewport, ScrollBar } from "../tailgrids/core/scroll-area"
 import MatchHomeScoreboardForm from "./match-home-scoreboard-form"
 import { useState } from "react"
 import { Pagination } from "../tailgrids/core/pagination"

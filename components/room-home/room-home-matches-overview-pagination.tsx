@@ -10,7 +10,7 @@ export default function RoomHomeMatchesOverviewPagination({ children }: { childr
     const totalPages = Math.ceil(children.length / itemsPerPage)
 
     return (
-        <div className='flex flex-col gap-2 px-2 py-4 h-full'>
+        <div className='flex flex-col gap-2 px-2 pt-4 pb-1 h-full'>
             <div className='grow flex flex-col gap-4'>
                 {children.slice((currentPage - 1) * itemsPerPage, (currentPage - 1) * itemsPerPage + itemsPerPage)}
             </div>

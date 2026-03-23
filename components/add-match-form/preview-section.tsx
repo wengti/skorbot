@@ -43,63 +43,67 @@ export default function PreviewSection({ preview, roomParticipants, showEstimati
             previewCards.push(
 
                 /* Card */
-                <div key={curPlayer.id} className='flex flex-col border p-4 rounded-xl'>
 
-                    {/* Avatar */}
-                    <Avatar
-                        key={curPlayer.id}
-                        src={curPlayer.picture}
-                        alt={`The profile picture of ${curPlayer.name}`}
-                        fallback={curPlayer.name.slice(0, 1)}
-                        size='lg'
-                        label={{
-                            title: curPlayer.name,
-                            subtitle: curPlayer.email
-                        }}
-                        className='bg-(--color-pale) dark:bg-(--color-dark-pale) pr-6 pl-4 py-2 w-62.5 rounded-full mx-auto'
-                    />
+                <ScrollArea key={curPlayer.id} className='flex flex-col border rounded-xl h-113.25'>
+                    <ScrollAreaViewport className='p-4'>
 
-                    {/* Summary */}
-                    <div className="flex flex-col my-4">
+                        {/* Avatar */}
+                        <Avatar
+                            key={curPlayer.id}
+                            src={curPlayer.picture}
+                            alt={`The profile picture of ${curPlayer.name}`}
+                            fallback={curPlayer.name.slice(0, 1)}
+                            size='lg'
+                            label={{
+                                title: curPlayer.name,
+                                subtitle: curPlayer.email
+                            }}
+                            className='bg-(--color-pale) dark:bg-(--color-dark-pale) pr-6 pl-4 py-2 w-62.5 rounded-full mx-auto'
+                        />
 
-                        {/* Num of Matches Played */}
-                        <div className='flex gap-2 items-center text-md'>
-                            <TbSwords className='text-sm' />
-                            <p>{profile[playerId].numMatchesPlayed} matches</p>
+                        {/* Summary */}
+                        <div className="flex flex-col my-4">
+
+                            {/* Num of Matches Played */}
+                            <div className='flex gap-2 items-center text-md'>
+                                <TbSwords className='text-sm' />
+                                <p>{profile[playerId].numMatchesPlayed} matches</p>
+                            </div>
+
+                            {/* Back to Back Matches */}
+                            <div className='flex gap-2 items-center text-md'>
+                                <TbSwords className='text-sm' />
+                                <p>{profile[playerId].longestStreak} b2b matches at most</p>
+                            </div>
+
+                            {/* Schedule */}
+                            <div className='flex flex-wrap justify-center w-55 mx-auto'>
+                                {
+                                    profile[playerId].schedule.map((entry, idx) => {
+                                        const hasGap = (idx + 1) % 5 === 0 ? 'mr-2' : ''
+                                        if (entry === 'o') return <MdOutlineCheckBox key={idx} className={`text-green-500 text-xl ${hasGap}`} />
+                                        else return <MdOutlineCheckBoxOutlineBlank key={idx} className={`text-gray-500 text-xl ${hasGap}`} />
+                                    })
+                                }
+                            </div>
                         </div>
 
-                        {/* Back to Back Matches */}
-                        <div className='flex gap-2 items-center text-md'>
-                            <TbSwords className='text-sm' />
-                            <p>{profile[playerId].longestStreak} b2b matches at most</p>
-                        </div>
-
-                        {/* Schedule */}
-                        <div className='flex flex-wrap justify-center w-55 mx-auto'>
-                            {
-                                profile[playerId].schedule.map((entry, idx) => {
-                                    const hasGap = (idx + 1) % 5 === 0 ? 'mr-2' : ''
-                                    if (entry === 'o') return <MdOutlineCheckBox key={idx} className={`text-green-500 text-xl ${hasGap}`} />
-                                    else return <MdOutlineCheckBoxOutlineBlank key={idx} className={`text-gray-500 text-xl ${hasGap}`} />
-                                })
-                            }
-                        </div>
-                    </div>
-
-                    {/* Teammate and Opponent Table */}
-                    <TableRoot className='dark:border-(--color-dark-text)'>
-                        <TableHeader>
-                            <TableRow className='text-black dark:text-(--color-dark-text)'>
-                                <TableHead className={`${headerClsName}`}>Player</TableHead>
-                                <TableHead className={`${headerClsName}`}>Team</TableHead>
-                                <TableHead className={`${headerClsName}`}>VS</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {rows}
-                        </TableBody>
-                    </TableRoot>
-                </div>
+                        {/* Teammate and Opponent Table */}
+                        <TableRoot className='dark:border-(--color-dark-text)'>
+                            <TableHeader>
+                                <TableRow className='text-black dark:text-(--color-dark-text)'>
+                                    <TableHead className={`${headerClsName}`}>Player</TableHead>
+                                    <TableHead className={`${headerClsName}`}>Team</TableHead>
+                                    <TableHead className={`${headerClsName}`}>VS</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {rows}
+                            </TableBody>
+                        </TableRoot>
+                    </ScrollAreaViewport>
+                    <ScrollBar orientation='vertical' />
+                </ScrollArea>
             )
         }
     }
@@ -115,7 +119,7 @@ export default function PreviewSection({ preview, roomParticipants, showEstimati
             </div>
 
             {/* Inner Container */}
-            <div className="w-full border px-2 py-4 rounded-xl">
+            <div className="w-full h-145 border px-2 py-4 rounded-xl flex flex-col">
 
                 {/* Total number of matches */}
                 {
