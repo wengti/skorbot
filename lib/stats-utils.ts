@@ -63,6 +63,58 @@ async function updateOneEntry(
     }
 }
 
+
+async function updateSelf(
+    supabase: SupabaseClient,
+    playerRecord: PlayersRecordType
+) {
+    const { data: curStatsData, error: curStatsError } = await supabase
+        .from('stats')
+        .select(
+            `cur_player, other_player, relationship, wins, losses, score_diff, win_rate`
+        )
+        .eq('cur_player', playerRecord.user.id)
+        .eq('other_player', playerRecord.user.id)
+        .eq('relationship', 'self')
+    if (curStatsError) throw new Error(curStatsError.message)
+    else if (curStatsData === null) throw new Error(`Unable to find the corresponding data.`)
+
+    /* No previous record */
+    if (curStatsData.length === 0) {
+        const newData = {
+            cur_player: playerRecord.user.id,
+            other_player: playerRecord.user.id,
+            relationship: 'self',
+            wins: playerRecord.wins,
+            losses: playerRecord.losses,
+            score_diff: playerRecord.scoreDiff,
+            win_rate: playerRecord.wins + playerRecord.losses === 0 ? 0 : ((playerRecord.wins / (playerRecord.wins + playerRecord.losses)) * 100).toFixed(2)
+        }
+        const { error: insertError } = await supabase
+            .from('stats')
+            .insert(newData)
+        if (insertError) throw new Error(insertError.message)
+    }
+    /* With Previous Record */
+    else if (curStatsData.length > 0) {
+        const oldEntry = curStatsData[0]
+        const newData = {
+            wins: oldEntry.wins + playerRecord.wins,
+            losses: oldEntry.losses + playerRecord.losses,
+            score_diff: oldEntry.score_diff + playerRecord.scoreDiff,
+            win_rate: oldEntry.wins + playerRecord.wins + oldEntry.losses + playerRecord.losses === 0 ? 0 : (((oldEntry.wins + playerRecord.wins) / (oldEntry.wins + playerRecord.wins + oldEntry.losses + playerRecord.losses)) * 100).toFixed(2)
+        }
+        const { error: updateError } = await supabase
+            .from('stats')
+            .update(newData)
+            .eq('cur_player', playerRecord.user.id)
+            .eq('other_player', playerRecord.user.id)
+            .eq('relationship', 'self')
+
+        if (updateError) throw new Error(updateError.message)
+    }
+}
+
 export default async function updateStats(playersRecord: PlayersRecordType[]) {
     try {
         const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_SECRET_SUPABASE_KEY!, {
@@ -77,6 +129,7 @@ export default async function updateStats(playersRecord: PlayersRecordType[]) {
         playersRecord.forEach(record => {
             for (let teammate of record.teammates) promises.push(updateOneEntry(supabase, record, teammate, 'teammate'))
             for (let opponent of record.opponents) promises.push(updateOneEntry(supabase, record, opponent, 'opponent'))
+            promises.push(updateSelf(supabase, record))
         })
 
         await Promise.all(promises)

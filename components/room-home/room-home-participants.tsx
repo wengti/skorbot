@@ -14,14 +14,16 @@ export default function RoomHomeParticipants({ roomData }: { roomData: RoomDataT
         const extraNum = roomData[0].room_participants.length - 5
         const roomParticipantsAvatar = roomParticipants.map(p => {
             return (
-                <div key={p.id} className='w-fit'>
-                    <Avatar
-                        src={p.picture}
-                        fallback={p.name.slice(1)}
-                        size="lg"
-                        label={{ title: p.name, subtitle: p.email }}
-                    />
-                </div>
+                <Link key={p.id} href={`/user/stats/${p.id}`}>
+                    <div className='w-fit'>
+                        <Avatar
+                            src={p.picture}
+                            fallback={p.name.slice(1)}
+                            size="lg"
+                            label={{ title: p.name, subtitle: p.email }}
+                        />
+                    </div>
+                </Link>
             )
         })
 

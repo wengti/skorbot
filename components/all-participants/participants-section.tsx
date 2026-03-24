@@ -8,6 +8,7 @@ import { createClient } from "@/lib/supabase/client";
 import { useState } from "react";
 import { MdOutlineClear } from "react-icons/md";
 import SearchForm from "../search-form/search-form";
+import Link from "next/link";
 
 export default function ParticipantsSection({ isParticipants, initParticipants, roomId, owners }: { isParticipants: boolean, initParticipants: ClientUserContextType[], roomId: string, owners: ClientUserContextType[] }) {
 
@@ -36,7 +37,7 @@ export default function ParticipantsSection({ isParticipants, initParticipants, 
                 .eq('room', roomId)
                 .eq('participant', entry.id)
                 .eq('is_owner', false)
-            
+
             setParticipants((prevParticipant) => prevParticipant.filter(p => p.id !== entry.id))
             setError(null)
         }
@@ -51,22 +52,25 @@ export default function ParticipantsSection({ isParticipants, initParticipants, 
         return (
             <div className="flex relative" key={participant.id}>
                 {
-                    isCurrentUserOwner && isParticipants && 
-                    <MdOutlineClear 
-                        className="text-lg absolute right-4 top-2 hover:cursor-pointer" 
+                    isCurrentUserOwner && isParticipants &&
+                    <MdOutlineClear
+                        className="text-lg absolute right-4 top-2 hover:cursor-pointer"
                         onClick={() => { handleRemoveParticipant(participant) }} />
                 }
-                <Avatar
-                    src={participant.picture}
-                    alt={`The profile picture of ${participantName}`}
-                    fallback={participant.name.slice(0, 1)}
-                    size='lg'
-                    label={{
-                        title: participantName,
-                        subtitle: participant.email
-                    }}
-                    className='bg-(--color-pale) dark:bg-(--color-dark-pale) pr-6 pl-4 py-2 w-62.5 rounded-full'
-                />
+
+                <Link href={`/user/stats/${participant.id}`} className='hover:cursor-pointer'>
+                    <Avatar
+                        src={participant.picture}
+                        alt={`The profile picture of ${participantName}`}
+                        fallback={participant.name.slice(0, 1)}
+                        size='lg'
+                        label={{
+                            title: participantName,
+                            subtitle: participant.email
+                        }}
+                        className='bg-(--color-pale) dark:bg-(--color-dark-pale) pr-6 pl-4 py-2 w-62.5 rounded-full'
+                    />
+                </Link>
             </div>
         )
     })
@@ -77,13 +81,13 @@ export default function ParticipantsSection({ isParticipants, initParticipants, 
                 {isParticipants ? <IoPeopleSharp /> : <FaCrown />}
                 <h2>{isParticipants ? 'Participants' : 'Owners'}</h2>
             </div>
-            {   
+            {
                 error &&
                 <p className='text-red-500'>{error.message}</p>
             }
             {
                 isParticipants &&
-                <SearchForm participants={participants} setParticipants={setParticipants} roomId={roomId} ownerId={owners[0].id}/>
+                <SearchForm participants={participants} setParticipants={setParticipants} roomId={roomId} ownerId={owners[0].id} />
             }
             <div className='grid grid-cols-[repeat(auto-fill,250px)] w-full gap-4 justify-center'>
                 {participantsList}

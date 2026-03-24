@@ -10,6 +10,7 @@ import { ClientUserContextType } from "@/type/auth-type";
 import { cacheTag } from "next/cache";
 import RoomHomeNewMatchesBtn from "./room-home-new-matches-btn";
 import RoomHomeMatchesOverviewPagination from "./room-home-matches-overview-pagination";
+import { FaLock, FaLockOpen } from "react-icons/fa6";
 
 type MatchDataType = {
     id: string,
@@ -18,6 +19,7 @@ type MatchDataType = {
     num_of_rounds: number,
     length: 'short' | 'medium' | 'long'
     players: string[]
+    is_pending: boolean
 }
 
 async function getCurrentUserId() {
@@ -31,7 +33,7 @@ async function getMatchesData(roomId: string): Promise<MatchDataType[]> {
     const supabase = await createClient()
     const { data: rawMatchData, error: matchError } = await supabase
         .from('matches')
-        .select(`id, created_at, team_config, num_of_rounds, players, length`)
+        .select(`id, created_at, team_config, num_of_rounds, players, length, is_pending`)
         .eq('room', roomId)
         .order('created_at', { ascending: false })
     if (matchError || rawMatchData === null) throw new Error(matchError.message)
@@ -70,7 +72,10 @@ export default async function RoomHomeMatchesOverview({ roomId, roomParticipants
                     <div className='grow px-2'>
                         <div className='flex justify-between'>
                             <div className='flex items-center'>
-                                {data.players.includes(currentUserId) && <LiaStarSolid className='text-green-500' />}
+                                <div className='flex gap-1 mr-2'>
+                                    {data.players.includes(currentUserId) && <LiaStarSolid className='text-green-500' />}
+                                    {data.is_pending ? <FaLockOpen /> : <FaLock />}
+                                </div>
                                 <p className='text-sm text-gray-500 font-bold'>Created at {dateTime.toLocaleDateString('en-GB')}</p>
                             </div>
                             <Link href={`/user/rooms/${roomId}/match/${data.id}`} className="underline text-sm">See More</Link>

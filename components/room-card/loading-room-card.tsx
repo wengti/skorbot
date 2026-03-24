@@ -22,7 +22,6 @@ export default function LoadingRoomCard() {
                     <p className='absolute -top-4 left-4 text-lg bg-(--color-pale) dark:bg-(--color-dark-pale) px-2 '>Shortcut</p>
                     <Skeleton className="h-18 w-18 rounded-lg" />
                     <Skeleton className="h-18 w-18 rounded-lg" />
-                    <Skeleton className="h-18 w-18 rounded-lg" />
                 </div>
             </div>
         )

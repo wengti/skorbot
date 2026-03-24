@@ -14,22 +14,31 @@ export default function MatchHomeFinalLockBtn({ playersRecord, matchData }: { pl
     const { is_pending } = matchData
 
     const [error, setError] = useState<Error | null>(null)
+    const [isBeingLocked, setIsBeingLocked] = useState<boolean>(false)
     const router = useRouter()
 
     async function handleFinalize() {
 
+        setIsBeingLocked(true)
         const { error: updateError } = await updateStats(playersRecord)
-        if(updateError) {
+        if (updateError) {
+            setIsBeingLocked(false)
             setError(updateError)
             return
         }
 
         const supabase = createClient()
-        const {error: lockError} = await supabase
+        const { error: lockError } = await supabase
             .from('matches')
-            .update({is_pending: false})
+            .update({ is_pending: false })
             .eq('id', matchData.id)
+        if (lockError) {
+            setIsBeingLocked(false)
+            setError(lockError)
+            return
+        }
 
+        setIsBeingLocked(false)
         setError(null)
         router.push(`/user/rooms/${matchData.rooms.id}`)
     }
@@ -43,15 +52,22 @@ export default function MatchHomeFinalLockBtn({ playersRecord, matchData }: { pl
                 <PopoverContent >
                     <PopoverHeading className='text-black dark:text-(--color-dark-text) font-bold'>Finalizing results</PopoverHeading>
                     <PopoverDescription className="mb-6 text-sm text-black dark:text-(--color-dark-text) font-bold">
-                        {error ?
-                            <span className='text-red-500'>{error.message}</span> :
-                            `You can no longer amend the results after this action.`
+                        {
+                            isBeingLocked ?
+                                `Stop making changes and stay on this page.` :
+                                error ?
+                                    <span className='text-red-500'>{error.message}</span> :
+                                    `You can no longer amend the results after this action.`
                         }
                     </PopoverDescription>
                     <div className="flex gap-3">
                         <button onClick={() => { handleFinalize() }}>
                             <Button size='sm'>
-                                Click here to proceed
+                                {
+                                    isBeingLocked ?
+                                    `Locking... please stay` :
+                                    `Click here to proceed`
+                                }
                             </Button>
                         </button>
                     </div>

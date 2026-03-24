@@ -185,9 +185,11 @@ export default function MatchHomeLeaderboardServerComponent({ playersData, resul
         /* 2. Score Difference */
         /* 3. Win Rate */
         playersRecord.sort((a, b) => {
-            if (a.wins !== b.wins) return b.wins - a.wins
-            else if (a.scoreDiff !== b.scoreDiff) return b.scoreDiff - a.scoreDiff
-            else return (b.wins / (b.losses + b.wins)) - (a.wins / (a.losses + a.wins))
+            const winRateB = (b.wins / (b.losses + b.wins))
+            const winRateA = (a.wins / (a.losses + a.wins))
+            if(winRateB !== winRateA) return winRateB - winRateA
+            else if (a.wins !== b.wins) return b.wins - a.wins
+            else return b.scoreDiff - a.scoreDiff
         })
 
         /* Pass on the calculated result to the user side for UI */

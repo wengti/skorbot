@@ -144,7 +144,7 @@ type LabelGroupProps = VariantProps<typeof titleStyles> & {
 export function LabelGroup({ title, subtitle, size }: LabelGroupProps) {
   return (
     <figcaption>
-      <div className={titleStyles({ size })}><p className='text-black dark:text-(--color-dark-text)'>{title}</p></div>
+      <div className={titleStyles({ size })}><p className='text-black dark:text-(--color-dark-text) font-bold'>{title}</p></div>
 
       {subtitle && <div className={subtitleStyles({ size })}><p className='text-black dark:text-(--color-dark-text)'>{subtitle}</p></div>}
     </figcaption>

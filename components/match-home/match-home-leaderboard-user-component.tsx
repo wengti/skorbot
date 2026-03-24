@@ -9,6 +9,7 @@ import { Pagination } from "../tailgrids/core/pagination";
 import { MatchDataType } from "@/app/user/rooms/[roomId]/match/[matchId]/page";
 import MatchHomeFinalLockBtn from "./match-home-final-lock-btn";
 import { useClientUserContext } from "@/context/client-user-context-provider";
+import Link from "next/link";
 
 
 function shortenName(name: string): string {
@@ -18,8 +19,6 @@ function shortenName(name: string): string {
 
 export default function MatchHomeLeaderboardUserComponent({ playersRecord, matchData }: { playersRecord: PlayersRecordType[], matchData: MatchDataType | null }) {
 
-
-    console.log(playersRecord)
     /* State - Pagination */
     const [currentPage, setCurrentPage] = useState<number>(1)
     const itemsPerPage = 5
@@ -57,7 +56,11 @@ export default function MatchHomeLeaderboardUserComponent({ playersRecord, match
         return (
             <TableRow key={rank}>
                 <TableCell className={`${rowClsName}`}>#{rank}</TableCell>
-                <TableCell className={`${rowClsName}`}>{shortenName(record.user.name)}</TableCell>
+                <TableCell className={`${rowClsName}`}>
+                    <Link href={`/user/stats/${record.user.id}`}>
+                        {shortenName(record.user.name)}
+                    </Link>
+                </TableCell>
                 <TableCell className={`${rowClsName}`}>{record.wins}</TableCell>
                 <TableCell className={`${rowClsName}`}>{record.losses}</TableCell>
                 <TableCell className={`${rowClsName}`}>{record.scoreDiff}</TableCell>
