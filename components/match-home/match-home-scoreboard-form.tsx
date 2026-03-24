@@ -5,11 +5,9 @@ import { FaLockOpen, FaLock } from "react-icons/fa";
 import { ChangeEvent, Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { RealtimeChannel } from "@supabase/supabase-js";
-import { getUserData } from "@/lib/auth-utils";
 import { useClientUserContext } from "@/context/client-user-context-provider";
 import { LiaStarSolid } from "react-icons/lia";
 import { useRouter } from "next/navigation";
-import { NumberFieldProps } from "react-aria-components";
 
 /* Payload - Returned data type upon receving an update from the subscribed table */
 /* Used to sync all users/devices on the latest score */
@@ -153,6 +151,9 @@ export default function MatchHomeScoreboardForm({ resultData, playersData, idx, 
     /* Function - handle the lock features */
     async function handleLock() {
 
+        /* Not allow changing status anymore once it has been finalized */
+        if(!matchData.is_pending) return
+
         /* Update UI by setting the state */
         setIsLocked((prevIsLocked) => !prevIsLocked)
 
@@ -275,7 +276,7 @@ export default function MatchHomeScoreboardForm({ resultData, playersData, idx, 
 
                     {/* Lock action props */}
                     {
-                        isLocked ?
+                        (isLocked || !matchData.is_pending) ?
                             <FaLock onClick={() => handleLock()} className={`${lockClsNameIfNotOwner}`} /> :
                             <FaLockOpen onClick={() => handleLock()} className={`${lockClsNameIfNotOwner}`} />
                     }
@@ -291,7 +292,7 @@ export default function MatchHomeScoreboardForm({ resultData, playersData, idx, 
                             value={scoreA}
                             onChange={(event) => { handleScoreChange(event, 'teamA', scoreA, setScoreA) }}
                             className={`w-full rounded-md bg-(--color-main) dark:bg-(--color-dark-main) text-center ${scoreClsNameIfNotOwner}`}
-                            disabled={isLocked || !isRoomOwner}
+                            disabled={isLocked || !isRoomOwner || !matchData.is_pending}
                         />
 
                         {/* Team B's score */}
@@ -302,7 +303,7 @@ export default function MatchHomeScoreboardForm({ resultData, playersData, idx, 
                             value={scoreB}
                             onChange={(event) => { handleScoreChange(event, 'teamB', scoreB, setScoreB) }}
                             className={`w-full rounded-md bg-(--color-main) dark:bg-(--color-dark-main) text-center ${scoreClsNameIfNotOwner}`}
-                            disabled={isLocked || !isRoomOwner}
+                            disabled={isLocked || !isRoomOwner || !matchData.is_pending}
                         />
                     </div>
                 </div>

@@ -6,19 +6,28 @@ import Image from "next/image";
 import { PlayersRecordType } from "./match-home-leaderboard-server-component";
 import { useState } from "react";
 import { Pagination } from "../tailgrids/core/pagination";
+import { MatchDataType } from "@/app/user/rooms/[roomId]/match/[matchId]/page";
+import MatchHomeFinalLockBtn from "./match-home-final-lock-btn";
+import { useClientUserContext } from "@/context/client-user-context-provider";
 
 
 function shortenName(name: string): string {
-    const returnedName = name.length > 12 ? name.slice(0, 10) + '..' : name
+    const returnedName = name.length > 11 ? name.slice(0, 9) + '..' : name
     return returnedName
 }
 
-export default function MatchHomeLeaderboardUserComponent({ playersRecord }: { playersRecord: PlayersRecordType[] }) {
+export default function MatchHomeLeaderboardUserComponent({ playersRecord, matchData }: { playersRecord: PlayersRecordType[], matchData: MatchDataType | null }) {
 
+
+    console.log(playersRecord)
     /* State - Pagination */
     const [currentPage, setCurrentPage] = useState<number>(1)
     const itemsPerPage = 5
     const totalPages = Math.ceil(playersRecord.length / itemsPerPage)
+
+    /* isOwner */
+    const currentUser = useClientUserContext()
+    const isOwner = currentUser.id === matchData?.rooms.owner
 
     /* Class Name for cell rows */
     const headerClsName = 'text-black font-bold dark:text-(--color-dark-text) p-1.5 sm:text-base'
@@ -41,14 +50,14 @@ export default function MatchHomeLeaderboardUserComponent({ playersRecord }: { p
     ]
 
     /* Table Entry */
-    const tableRows = playersRecord.slice((currentPage-1)*itemsPerPage, (currentPage-1)*itemsPerPage+itemsPerPage).map((record, idx) => {
+    const tableRows = playersRecord.slice((currentPage - 1) * itemsPerPage, (currentPage - 1) * itemsPerPage + itemsPerPage).map((record, idx) => {
 
-        const rank = (idx+1) + (currentPage-1)*itemsPerPage
+        const rank = (idx + 1) + (currentPage - 1) * itemsPerPage
 
         return (
             <TableRow key={rank}>
                 <TableCell className={`${rowClsName}`}>#{rank}</TableCell>
-                <TableCell className={`${rowClsName}`}>{record.user.name}</TableCell>
+                <TableCell className={`${rowClsName}`}>{shortenName(record.user.name)}</TableCell>
                 <TableCell className={`${rowClsName}`}>{record.wins}</TableCell>
                 <TableCell className={`${rowClsName}`}>{record.losses}</TableCell>
                 <TableCell className={`${rowClsName}`}>{record.scoreDiff}</TableCell>
@@ -62,12 +71,14 @@ export default function MatchHomeLeaderboardUserComponent({ playersRecord }: { p
 
     return (
 
-        <div className='h-130 border rounded-lg my-2 flex flex-col' >
+        <div className='h-130 border rounded-lg my-2 flex flex-col relative' >
 
-            <div className="w-full h-50 aspect-video mx-auto mt-9 mb-0">
+            <div className="w-full h-50 aspect-video mx-auto mt-9 mb-0 z-0">
 
                 {/* Leaderboard */}
                 <ResponsiveContainer initialDimension={{ width: 100, height: 100 }} width='80%' className='mx-auto block relative pt-14 sm:pt-10.5'>
+
+
 
                     {/* The Bar */}
                     <BarChart data={leaderboardData} barCategoryGap={0}>
@@ -136,6 +147,14 @@ export default function MatchHomeLeaderboardUserComponent({ playersRecord }: { p
                     </div>
                 </ResponsiveContainer>
             </div>
+
+            {/* Lock Button */}
+            {
+                matchData && isOwner &&
+                <div className='absolute top-2 right-2 cursor-pointer'>
+                    <MatchHomeFinalLockBtn playersRecord={playersRecord} matchData={matchData} />
+                </div>
+            }
 
             {/* Leaderboard table */}
             <div className='mx-2 grow mt-4'>

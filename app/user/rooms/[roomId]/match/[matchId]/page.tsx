@@ -18,8 +18,10 @@ export type MatchDataType = {
     note: string
     players: string[]
     rooms: {
+        id: string
         owner: string
     }
+    is_pending: boolean
 }
 
 export type ResultDataType = {
@@ -51,9 +53,9 @@ export default async function MatchHomePage({ params }: { params: Promise<{ room
         const { data: rawMatchData, error: matchError } = await supabase
             .from('matches')
             .select(`
-                id, created_at, team_config, num_of_rounds, length, maxLength, note, players,
+                id, created_at, team_config, num_of_rounds, length, maxLength, note, players, is_pending,
                 rooms(
-                    owner
+                    id, owner
                 )
             `)
             .eq('id', matchId)
@@ -110,7 +112,7 @@ export default async function MatchHomePage({ params }: { params: Promise<{ room
                         <MatchHomeScoreboard matchData={matchData[0]} playersData={playersData} resultData={resultData} />
                     </div>
                     <div className='lg:w-6/11'>
-                        <MatchHomeLeaderboard playersData={playersData} resultData={resultData}/>
+                        <MatchHomeLeaderboard playersData={playersData} resultData={resultData} matchData={matchData[0]}/>
                     </div>
                 </div>
                 <div className='lg:flex lg:gap-2'>

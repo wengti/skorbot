@@ -62,7 +62,7 @@ export default async function RoomHomeLeaderboard({ roomId }: { roomId: string }
         const resultData = [...oneData, ...twoData]
 
         /* Pass on to the server component for computing the results */
-        return <MatchHomeLeaderboardServerComponent playersData={playersData} resultData={resultData} />
+        return <MatchHomeLeaderboardServerComponent playersData={playersData} resultData={resultData} matchData={null}/>
     }
     catch (error) {
         if (error instanceof Error) redirect(`/auth/error?error=${error.message}`)

@@ -1,12 +1,12 @@
 import { MdLeaderboard } from "react-icons/md";
-import { PlayersDataType, ResultDataType } from "@/app/user/rooms/[roomId]/match/[matchId]/page";
+import { MatchDataType, PlayersDataType, ResultDataType } from "@/app/user/rooms/[roomId]/match/[matchId]/page";
 import { redirect } from "next/navigation";
 import MatchHomeLeaderboardServerComponent from "./match-home-leaderboard-server-component";
 
 
 
 
-export default async function MatchHomeLeaderboard({ playersData, resultData }: { playersData: PlayersDataType[], resultData: ResultDataType[] }) {
+export default async function MatchHomeLeaderboard({ playersData, resultData, matchData }: { playersData: PlayersDataType[], resultData: ResultDataType[], matchData: MatchDataType }) {
 
     try {
         return (
@@ -15,7 +15,7 @@ export default async function MatchHomeLeaderboard({ playersData, resultData }: 
                     <MdLeaderboard />
                     <h2>Leaderboard</h2>
                 </div>
-                <MatchHomeLeaderboardServerComponent playersData={playersData} resultData={resultData}/>
+                <MatchHomeLeaderboardServerComponent playersData={playersData} resultData={resultData} matchData={matchData}/>
             </section>
         )
     }
