@@ -55,10 +55,6 @@ export default async function StatsSummary({ statsData, bestTeammate, worstOppon
                         </div>
                     </StatsBadge>
                 }
-
-
-
-
             </div> :
             <div className='text-center text-slate-500 dark:text-gray-500 text-sm'>
                 No results

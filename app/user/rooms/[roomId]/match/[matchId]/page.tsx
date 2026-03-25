@@ -1,3 +1,6 @@
+import LoadingMatchHomeLeaderboard from "@/components/match-home/loading-match-home-leaderboard"
+import LoadingMatchHomePayment from "@/components/match-home/loading-match-home-payment"
+import LoadingMatchHomePreview from "@/components/match-home/loading-match-home-preview"
 import MatchHomeLeaderboard from "@/components/match-home/match-home-leaderboard"
 import MatchHomePaymenmt from "@/components/match-home/match-home-payment"
 import MatchHomePreview from "@/components/match-home/match-home-preview"
@@ -6,6 +9,7 @@ import MatchHomeTitle from "@/components/match-home/match-home-title"
 import { createClient } from "@/lib/supabase/server"
 import { ClientUserContextType } from "@/type/auth-type"
 import { redirect } from "next/navigation"
+import { Suspense } from "react"
 
 
 export type MatchDataType = {
@@ -109,21 +113,27 @@ export default async function MatchHomePage({ params }: { params: Promise<{ room
                 <MatchHomeTitle matchData={matchData[0]} />
                 <div className='lg:flex lg:gap-2'>
                     <div className='lg:w-5/11'>
-                        <MatchHomeScoreboard matchData={matchData[0]} playersData={playersData} resultData={resultData} />
+                        <MatchHomeScoreboard matchData={matchData[0]} playersData={playersData} resultData={resultData} /> {/* Client component - not need suspense */}
                     </div>
                     <div className='lg:w-6/11'>
-                        <MatchHomeLeaderboard playersData={playersData} resultData={resultData} matchData={matchData[0]}/>
+                        <Suspense fallback={<LoadingMatchHomeLeaderboard />} >
+                            <MatchHomeLeaderboard playersData={playersData} resultData={resultData} matchData={matchData[0]} />
+                        </Suspense>
                     </div>
                 </div>
                 <div className='lg:flex lg:gap-2'>
                     <div className='lg:w-5/11'>
-                        <MatchHomePreview matchData={matchData[0]} playersData={playersData} />
+                        <Suspense fallback={<LoadingMatchHomePreview />} >
+                            <MatchHomePreview matchData={matchData[0]} playersData={playersData} />
+                        </Suspense>
                     </div>
                     <div className='lg:w-6/11'>
-                        <MatchHomePaymenmt matchData={matchData[0]} playersData={playersData} roomId={roomId}/>
+                        <Suspense fallback={<LoadingMatchHomePayment />}>
+                            <MatchHomePaymenmt matchData={matchData[0]} playersData={playersData} roomId={roomId} />
+                        </Suspense>
                     </div>
                 </div>
-                
+
             </>
         )
     }

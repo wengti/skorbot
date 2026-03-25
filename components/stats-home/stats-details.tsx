@@ -19,6 +19,7 @@ export type StatsDataType = {
 export default async function StatsDetails({ playerId }: { playerId: string }) {
 
     try {
+
         const supabase = await createClient()
 
         /* Fetch the user stats */
@@ -47,7 +48,7 @@ export default async function StatsDetails({ playerId }: { playerId: string }) {
         return (
             <div className="flex flex-col gap-2">
 
-                <StatsSummary 
+                <StatsSummary
                     statsData={selfData}
                     bestTeammate={teammateData[0]}
                     worstOpponent={opponentData[opponentData.length - 1]}

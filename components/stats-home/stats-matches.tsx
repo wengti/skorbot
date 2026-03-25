@@ -28,6 +28,13 @@ export type StatsMatchDataType = {
 export default async function StatsMatches({ playerId }: { playerId: string }) {
 
     try {
+
+        await new Promise((resolve, reject) => {
+            setTimeout(() => {
+                resolve('')
+            }, 10000)
+        })
+        
         const supabase = await createClient()
         const { data: rawMatchData, error: matchError } = await supabase
             .from('matches')

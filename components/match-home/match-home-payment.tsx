@@ -9,6 +9,7 @@ import { CiStickyNote } from "react-icons/ci";
 export default async function MatchHomePaymenmt({ matchData, playersData, roomId }: { matchData: MatchDataType, playersData: PlayersDataType[], roomId: string }) {
 
     try {
+
         const { data, error } = await getUserData()
         if (error instanceof Error) throw new Error(error.message)
         else if (error !== null) throw new Error(error)
@@ -33,7 +34,7 @@ export default async function MatchHomePaymenmt({ matchData, playersData, roomId
                     </div>
                     {
                         currentUserId === ownerId ?
-                            <MatchHomePaymentOwner matchData={matchData} playersData={playersData} ownerId={ownerId} roomId={roomId}/> :
+                            <MatchHomePaymentOwner matchData={matchData} playersData={playersData} ownerId={ownerId} roomId={roomId} /> :
                             <MatchHomePaymentNonOwner roomId={roomId} matchData={matchData} playerId={currentUserId} />
                     }
                 </div>

@@ -1,7 +1,9 @@
+import LoadingParticipantsSection from "@/components/all-participants/loading-participants-section"
 import ParticipantsSection from "@/components/all-participants/participants-section"
 import { createClient } from "@/lib/supabase/server"
 import { ClientUserContextType } from "@/type/auth-type"
 import { redirect } from "next/navigation"
+import { Suspense } from "react"
 
 type participantsDataType = {
     participant: string,
@@ -36,8 +38,12 @@ export default async function AllParticipantsPage({ params }: { params: Promise<
 
         return (
             <section className='flex flex-col gap-4'>
-                <ParticipantsSection isParticipants={false} initParticipants={owners} roomId={roomId} owners={owners}/>
-                <ParticipantsSection isParticipants={true} initParticipants={participants} roomId={roomId} owners={owners}/>
+                <Suspense fallback={<LoadingParticipantsSection isParticipants={false} />}>
+                    <ParticipantsSection isParticipants={false} initParticipants={owners} roomId={roomId} owners={owners} />
+                </Suspense>
+                <Suspense fallback={<LoadingParticipantsSection isParticipants={true} />}>
+                    <ParticipantsSection isParticipants={true} initParticipants={participants} roomId={roomId} owners={owners} />
+                </Suspense>
             </section>
         )
 

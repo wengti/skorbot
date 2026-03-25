@@ -124,7 +124,7 @@ export default function PreviewSection({ preview, roomParticipants, showEstimati
                 {/* Total number of matches */}
                 {
                     showEstimation &&
-                    <div className='flex gap-2 items-center font-bold text-xl mb-4'>
+                    <div className='flex gap-2 items-center font-bold text-md md:text-lg mb-4'>
                         <FaGear />
                         <p>{flatFullResult.length} Matches | Estimated Playtime: {flatFullResult.length * 15} mins</p>
                     </div>

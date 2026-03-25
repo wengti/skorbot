@@ -12,14 +12,11 @@ import Link from "next/link";
 
 export default function ParticipantsSection({ isParticipants, initParticipants, roomId, owners }: { isParticipants: boolean, initParticipants: ClientUserContextType[], roomId: string, owners: ClientUserContextType[] }) {
 
-
     const [error, setError] = useState<Error | null>(null)
     const [participants, setParticipants] = useState<ClientUserContextType[]>(initParticipants)
 
     const currentUser = useClientUserContext()
     const isCurrentUserOwner = owners.map(owner => owner.id).includes(currentUser.id)
-
-
 
     /* Triggered when a participant is removed */
     async function handleRemoveParticipant(entry: ClientUserContextType) {

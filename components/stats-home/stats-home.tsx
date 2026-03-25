@@ -6,6 +6,9 @@ import { MdLeaderboard } from "react-icons/md"
 import { MdOutlineWatchLater } from "react-icons/md";
 import StatsMatches from "./stats-matches"
 import Image from "next/image"
+import { Suspense } from "react"
+import LoadingStatsDetail from "./loading-stats-detail"
+import LoadingStatsMatches from "./loading-stats-matches"
 
 export default async function StatsHome({ playerId }: { playerId: string }) {
 
@@ -44,7 +47,9 @@ export default async function StatsHome({ playerId }: { playerId: string }) {
                         <MdLeaderboard />
                         <h2>Stats</h2>
                     </div>
-                    <StatsDetails playerId={playerId}/>
+                    <Suspense fallback={<LoadingStatsDetail />}>
+                        <StatsDetails playerId={playerId} />
+                    </Suspense>
                 </div>
 
                 <div className='mt-8'>
@@ -52,7 +57,9 @@ export default async function StatsHome({ playerId }: { playerId: string }) {
                         <MdOutlineWatchLater />
                         <h2>Latest Matches</h2>
                     </div>
-                    <StatsMatches playerId={playerId}/>
+                    <Suspense fallback={<LoadingStatsMatches />}>
+                        <StatsMatches playerId={playerId} />
+                    </Suspense>
                 </div>
 
             </section>

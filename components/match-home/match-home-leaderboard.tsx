@@ -9,13 +9,14 @@ import MatchHomeLeaderboardServerComponent from "./match-home-leaderboard-server
 export default async function MatchHomeLeaderboard({ playersData, resultData, matchData }: { playersData: PlayersDataType[], resultData: ResultDataType[], matchData: MatchDataType }) {
 
     try {
+
         return (
             <section>
                 <div className='text-xl font-bold mb-1 flex gap-2 items-center mt-4'>
                     <MdLeaderboard />
                     <h2>Leaderboard</h2>
                 </div>
-                <MatchHomeLeaderboardServerComponent playersData={playersData} resultData={resultData} matchData={matchData}/>
+                <MatchHomeLeaderboardServerComponent playersData={playersData} resultData={resultData} matchData={matchData} />
             </section>
         )
     }
