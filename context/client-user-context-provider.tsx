@@ -76,6 +76,8 @@ export default function ClientUserContextProvdier({ children }: { children: Reac
 
     }, [])
 
+    console.log(userData)
+
     return (
         userData === undefined ?
             <UserLoading /> :
