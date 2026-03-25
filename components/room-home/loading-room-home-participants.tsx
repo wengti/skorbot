@@ -7,10 +7,10 @@ export default function LoadingRoomHomeParticipants({roomId}: {roomId: string}) 
     for (let i = 0; i < 6; i++) {
         placeholder.push(
             <div className="flex w-full max-w-sm items-center gap-3" key={i}>
-                <Skeleton className="size-12 rounded-full" />
+                <Skeleton className="size-12 rounded-full bg-(--color-pale) dark:bg-(--color-dark-pale)" />
                 <div className="flex-1 space-y-2">
-                    <Skeleton className="h-4 w-24" />
-                    <Skeleton className="h-3 w-32" />
+                    <Skeleton className="h-4 w-24 bg-(--color-pale) dark:bg-(--color-dark-pale)" />
+                    <Skeleton className="h-3 w-32 bg-(--color-pale) dark:bg-(--color-dark-pale)" />
                 </div>
             </div>
         )

@@ -13,22 +13,22 @@ export default function LoadingStatsDetail() {
         tableRows.push(
             <TableRow key={i}>
                 <TableCell>
-                    <Skeleton className="h-1 w-full" />
+                    <Skeleton className="h-1 w-full bg-(--color-pale) dark:bg-(--color-dark-pale)" />
                 </TableCell>
                 <TableCell>
-                    <Skeleton className="h-1 w-full" />
+                    <Skeleton className="h-1 w-full bg-(--color-pale) dark:bg-(--color-dark-pale)" />
                 </TableCell>
                 <TableCell>
-                    <Skeleton className="h-1 w-full" />
+                    <Skeleton className="h-1 w-full bg-(--color-pale) dark:bg-(--color-dark-pale)" />
                 </TableCell>
                 <TableCell>
-                    <Skeleton className="h-1 w-full" />
+                    <Skeleton className="h-1 w-full bg-(--color-pale) dark:bg-(--color-dark-pale)" />
                 </TableCell>
                 <TableCell>
-                    <Skeleton className="h-1 w-full" />
+                    <Skeleton className="h-1 w-full bg-(--color-pale) dark:bg-(--color-dark-pale)" />
                 </TableCell>
                 <TableCell>
-                    <Skeleton className="h-1 w-full" />
+                    <Skeleton className="h-1 w-full bg-(--color-pale) dark:bg-(--color-dark-pale)" />
                 </TableCell>
             </TableRow>
         )
@@ -38,10 +38,10 @@ export default function LoadingStatsDetail() {
         <div className="flex flex-col gap-2">
 
             <div className='flex flex-wrap gap-2 mx-auto justify-center'>
-                <Skeleton className='h-35 w-35 rounded-xl' />
-                <Skeleton className='h-35 w-35 rounded-xl' />
-                <Skeleton className='h-35 w-35 rounded-xl' />
-                <Skeleton className='h-35 w-35 rounded-xl' />
+                <Skeleton className='h-35 w-35 rounded-xl bg-(--color-pale) dark:bg-(--color-dark-pale)' />
+                <Skeleton className='h-35 w-35 rounded-xl bg-(--color-pale) dark:bg-(--color-dark-pale)' />
+                <Skeleton className='h-35 w-35 rounded-xl bg-(--color-pale) dark:bg-(--color-dark-pale)' />
+                <Skeleton className='h-35 w-35 rounded-xl bg-(--color-pale) dark:bg-(--color-dark-pale)' />
             </div>
 
             <div className='flex flex-col md:flex-row gap-2'>

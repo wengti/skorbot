@@ -15,7 +15,7 @@ export default function LoadingMatchHomePreview() {
             {/* Inner Container */}
             <div className="w-full h-145 border px-2 py-4 rounded-xl flex flex-col justify-center items-center">
                 {/* The preview cards and pagination */}
-                <Skeleton className='rounded-xl h-113.25 w-70.5'/>
+                <Skeleton className='rounded-xl h-113.25 w-70.5 bg-(--color-pale) dark:bg-(--color-dark-pale)'/>
             </div>
         </section>
     )

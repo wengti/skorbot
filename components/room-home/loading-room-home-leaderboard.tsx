@@ -12,22 +12,22 @@ export default function LoadingRoomHomeLeaderboard() {
         tableRows.push(
             <TableRow key={i}>
                 <TableCell>
-                    <Skeleton className="h-1 w-full" />
+                    <Skeleton className="h-1 w-full bg-(--color-pale) dark:bg-(--color-dark-pale)" />
                 </TableCell>
                 <TableCell>
-                    <Skeleton className="h-1 w-full" />
+                    <Skeleton className="h-1 w-full bg-(--color-pale) dark:bg-(--color-dark-pale)" />
                 </TableCell>
                 <TableCell>
-                    <Skeleton className="h-1 w-full" />
+                    <Skeleton className="h-1 w-full bg-(--color-pale) dark:bg-(--color-dark-pale)" />
                 </TableCell>
                 <TableCell>
-                    <Skeleton className="h-1 w-full" />
+                    <Skeleton className="h-1 w-full bg-(--color-pale) dark:bg-(--color-dark-pale)" />
                 </TableCell>
                 <TableCell>
-                    <Skeleton className="h-1 w-full" />
+                    <Skeleton className="h-1 w-full bg-(--color-pale) dark:bg-(--color-dark-pale)" />
                 </TableCell>
                 <TableCell>
-                    <Skeleton className="h-1 w-full" />
+                    <Skeleton className="h-1 w-full bg-(--color-pale) dark:bg-(--color-dark-pale)" />
                 </TableCell>
             </TableRow>
         )
@@ -58,17 +58,17 @@ export default function LoadingRoomHomeLeaderboard() {
 
                         {/* Container for 2nd-place player */}
                         <div className='font-bold flex flex-col items-center w-1/3 mt-11 sm:mt-13'>
-                            <Skeleton className="size-12 rounded-full" />
+                            <Skeleton className="size-12 rounded-full bg-(--color-pale) dark:bg-(--color-dark-pale)" />
                         </div>
 
                         {/* Container for 1st-place player */}
                         <div className='font-bold flex flex-col items-center w-1/3'>
-                            <Skeleton className="size-12 rounded-full" />
+                            <Skeleton className="size-12 rounded-full bg-(--color-pale) dark:bg-(--color-dark-pale)" />
                         </div>
 
                         {/* Container for 3rd-place player */}
                         <div className='font-bold flex flex-col items-center w-1/3 mt-22 sm:mt-25'>
-                            <Skeleton className="size-12 rounded-full" />
+                            <Skeleton className="size-12 rounded-full bg-(--color-pale) dark:bg-(--color-dark-pale)" />
                         </div>
                     </div>
                 </ResponsiveContainer>

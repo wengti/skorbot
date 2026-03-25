@@ -6,7 +6,7 @@ export default function LoadingStatsMatches() {
     const matchCells = []
     for (let i = 0; i < 4; i++) {
         matchCells.push(
-            <Skeleton className="h-20 w-full rounded-xl" key={i} />
+            <Skeleton className="h-20 w-full rounded-xl bg-(--color-pale) dark:bg-(--color-dark-pale)" key={i} />
         )
     }
 
