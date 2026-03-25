@@ -4,7 +4,7 @@ import { createClient } from "./supabase/server"
 import { cache } from "react"
 
 
-export const getUserData = cache(async ():Promise<GetUserDataPropsType> => {
+export const getUserData = async ():Promise<GetUserDataPropsType> => {
     try{
         const supabase = await createClient()
         const { data, error } = await supabase.auth.getClaims()
@@ -17,7 +17,7 @@ export const getUserData = cache(async ():Promise<GetUserDataPropsType> => {
         if (error instanceof Error) return {data: null, error}
         else return {data: null, error: 'Unknown Error'}
     }
-})
+}
 
 type GetRoomOwnerIdType = {
     data: string | null
