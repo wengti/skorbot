@@ -1,15 +1,21 @@
+import LoadingRoomHomeLeaderboard from "@/components/room-home/loading-room-home-leaderboard"
+import LoadingRoomHomeMatchesOverview from "@/components/room-home/loading-room-home-matches-overview"
+import LoadingRoomHomeParticipants from "@/components/room-home/loading-room-home-participants"
 import RoomHomeLeaderboard from "@/components/room-home/room-home-leaderboard"
 import RoomHomeMatchesOverview from "@/components/room-home/room-home-matches-overview"
 import RoomHomeParticipants from "@/components/room-home/room-home-participants"
 import { createClient } from "@/lib/supabase/server"
 import { RoomDataType } from "@/type/room-data-type"
 import { notFound, redirect } from "next/navigation"
+import { Suspense } from "react"
 import { IoPeopleSharp } from "react-icons/io5"
 import { MdLeaderboard } from "react-icons/md"
 import { TbSwords } from "react-icons/tb"
 
 
 export default async function RoomHomePage({ params }: { params: Promise<{ roomId: string }> }) {
+
+
     try {
 
         /* Get room id */
@@ -36,7 +42,7 @@ export default async function RoomHomePage({ params }: { params: Promise<{ roomI
         else if (roomData === null) notFound()
 
         return (
-            <>
+            <div className='shrink-0'>
                 {/* The latest participants*/}
                 <section className='max-w-300 mx-auto'>
                     <section>
@@ -44,7 +50,9 @@ export default async function RoomHomePage({ params }: { params: Promise<{ roomI
                             <IoPeopleSharp />
                             <h2>Participants</h2>
                         </div>
-                        <RoomHomeParticipants roomData={roomData}/>
+                        <Suspense fallback={<LoadingRoomHomeParticipants roomId={roomId} />} >
+                            <RoomHomeParticipants roomData={roomData} />
+                        </Suspense>
                     </section>
                 </section>
 
@@ -56,7 +64,9 @@ export default async function RoomHomePage({ params }: { params: Promise<{ roomI
                             <TbSwords />
                             <h2>Matches</h2>
                         </div>
-                        <RoomHomeMatchesOverview ownerId={roomData[0].owner} roomId={roomId} roomParticipants={roomData[0].room_participants.map(p => p.users)} />
+                        <Suspense fallback={<LoadingRoomHomeMatchesOverview roomData={roomData[0]} />} >
+                            <RoomHomeMatchesOverview ownerId={roomData[0].owner} roomId={roomId} roomParticipants={roomData[0].room_participants.map(p => p.users)} />
+                        </Suspense>
                     </section>
 
                     {/* All time leaderboard in this room */}
@@ -65,10 +75,12 @@ export default async function RoomHomePage({ params }: { params: Promise<{ roomI
                             <MdLeaderboard />
                             <h2>Leaderboard</h2>
                         </div>
-                        <RoomHomeLeaderboard roomId={roomId} />
+                        <Suspense fallback={<LoadingRoomHomeLeaderboard />}>
+                            <RoomHomeLeaderboard roomId={roomId} />
+                        </Suspense>
                     </section>
                 </section>
-            </>
+            </div>
         )
 
     }

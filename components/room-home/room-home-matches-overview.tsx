@@ -45,6 +45,7 @@ export default async function RoomHomeMatchesOverview({ roomId, roomParticipants
 
 
     try {
+
         /* Get the current user */
         const currentUserId = await getCurrentUserId()
 

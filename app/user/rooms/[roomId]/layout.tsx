@@ -32,7 +32,7 @@ export default async function RoomHomeLayout({ params, children }: { params: Pro
         else if (roomData === null) notFound()
 
         return (
-            <section>
+            <section className="flex flex-col grow w-full">
                 <Link href={`/user/rooms/${roomId}`} className='block w-fit'>
                     <RoomHomeTitle roomData={roomData}/>
                 </Link>
