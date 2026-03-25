@@ -66,7 +66,7 @@ export default async function StatsMatchesSection({ matchData }: { matchData: St
         })
 
         return (
-            <div className="w-full mt-2 rounded-lg flex flex-col ">
+            <div className="w-full mt-2 rounded-lg flex flex-col h-full">
                 <div className='grow'>
                     {
                         matchData.length > 0 ?

@@ -79,7 +79,7 @@ export default function ProfilePicture({ userData }: { userData: GetUserDataProp
                     />
                 </div>
                 <p className='hidden md:block font-bold' onClick={() => {handleExpandMenu()}}>{userName}</p>
-                { isMenuOpen && <Menu />}
+                { isMenuOpen && <Menu userId={userData?.data?.claims.sub}/>}
             </div>
         )
     }

@@ -32,12 +32,12 @@ function MenuItem({ children, href = null, icon=null }: { children: ReactNode, h
     }
 }
 
-export default function Menu() {
+export default function Menu({userId}: {userId: string | undefined}) {
     return (
         <nav className='bg-(--color-banner) dark:bg-(--color-dark-banner) absolute top-15.5 w-50 -right-2 sm:-right-12 md:-right-12 pl-4 pb-4 rounded-bl-xl border-l border-b'>
             <ul className='flex flex-col justify-center pt-2'>
                 <MenuItem href='/user/rooms' icon={<FaUserGroup />}>Rooms</MenuItem>
-                <MenuItem href='/user/stats' icon={<MdOutlineQueryStats />}>Stats</MenuItem>
+                <MenuItem href={`/user/stats/${userId}`} icon={<MdOutlineQueryStats />}>Stats</MenuItem>
                 <MenuItem ><HeaderLogoutBtn /></MenuItem>
             </ul>
         </nav>
