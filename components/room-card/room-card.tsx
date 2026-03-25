@@ -8,13 +8,15 @@ import { SupabaseClient } from "@supabase/supabase-js";
 import { getAProfilePicture } from "@/lib/picture";
 import Link from "next/link";
 import { RoomDataType } from "@/type/room-data-type";
+import { createClient } from "@/lib/supabase/server";
 
-export default function RoomCard({ room, supabase }: { room: RoomDataType, supabase: SupabaseClient<any, "public", "public", any, any> }) {
+export default async function RoomCard({ room, }: { room: RoomDataType }) {
 
     /* Cut the room name down to 12 letters only */
     const roomName = room.name.length >= 12 ? room.name.slice(0, 12).trim() + '...' : room.name
 
     /* Get the room picture */
+    const supabase = await createClient()
     const roomPicture = getARoomProfilePictureLink(supabase, room.owner, room.picture)
 
     /* Show the first 5 participants */

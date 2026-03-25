@@ -74,7 +74,7 @@ export default async function RoomCardGrid({isOwner}: {isOwner: boolean}) {
         return (
             roomData.length === 0 ?
                 <p className='text-slate-500 text-sm font-bold'>No result</p> :
-                roomData.map(room => <RoomCard room={room} supabase={supabase} key={room.id} />)
+                roomData.map(room => <RoomCard room={room} key={room.id} />)
         )
     }
     catch (error) {
