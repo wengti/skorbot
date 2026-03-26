@@ -1,109 +1,96 @@
-<a href="https://demo-nextjs-with-supabase.vercel.app/">
-  <img alt="Next.js and Supabase Starter Kit - the fastest way to build apps with Next.js and Supabase" src="https://demo-nextjs-with-supabase.vercel.app/opengraph-image.png">
-  <h1 align="center">Next.js and Supabase Starter Kit</h1>
-</a>
 
-<p align="center">
- The fastest way to build apps with Next.js and Supabase
-</p>
+# Skorbot
 
-<p align="center">
-  <a href="#features"><strong>Features</strong></a> ·
-  <a href="#demo"><strong>Demo</strong></a> ·
-  <a href="#deploy-to-vercel"><strong>Deploy to Vercel</strong></a> ·
-  <a href="#clone-and-run-locally"><strong>Clone and run locally</strong></a> ·
-  <a href="#feedback-and-issues"><strong>Feedback and issues</strong></a>
-  <a href="#more-supabase-examples"><strong>More Examples</strong></a>
-</p>
-<br/>
+<div align='center'>
+    <img src='/public/images/skorbot_logo.png' width='60%' align='center'/>
+</div>
 
-## Features
+A web application for:
+- arranging matchups
+- tracking score and stats 
+- as well as monitoring payment for game / sports sessions among friends. 
 
-- Works across the entire [Next.js](https://nextjs.org) stack
-  - App Router
-  - Pages Router
-  - Proxy
-  - Client
-  - Server
-  - It just works!
-- supabase-ssr. A package to configure Supabase Auth to use cookies
-- Password-based authentication block installed via the [Supabase UI Library](https://supabase.com/ui/docs/nextjs/password-based-auth)
-- Styling with [Tailwind CSS](https://tailwindcss.com)
-- Components with [shadcn/ui](https://ui.shadcn.com/)
-- Optional deployment with [Supabase Vercel Integration and Vercel deploy](#deploy-your-own)
-  - Environment variables automatically assigned to Vercel project
+It is powerered by **NextJS**, **Supabase**, **TailwindCSS** as well as **Tailgrids**.
 
-## Demo
+Vist the implementation: https://skorbot.vercel.app/
+Watch a demo video: https://youtu.be/lUbW93Q5HW0
 
-You can view a fully working demo at [demo-nextjs-with-supabase.vercel.app](https://demo-nextjs-with-supabase.vercel.app/).
+<div align='center'>
+    <img src='/demo/desktop/1.jpg' width='60%' align='center'/>
+</div>
+_
+<div align='center'>
+    <img src='/demo/desktop/2.jpg' width='45%' align='center'/>
+    <img src='/demo/desktop/3.jpg' width='45%' align='center'/>
+    
+</div>
+_
+<div align='center'>
+    <img src='/demo/desktop/4.jpg' width='45%' align='center'/>
+    <img src='/demo/desktop/5.jpg' width='45%' align='center'/>
+</div>
 
-## Deploy to Vercel
+## Key takeaway from the implementation
+- Additional notes from learning NextJS:
+    * Notes: https://github.com/wengti/nextjs-note
+    * Playgrounds: https://github.com/wengti/nextjs-playground and https://github.com/wengti/nextjs-playground-cache_components
 
-Vercel deployment will guide you through creating a Supabase account and project.
+1. `router.refresh()` 
+    - started as soon as the code starts executing the scope where it is in.
 
-After installation of the Supabase integration, all relevant environment variables will be assigned to the project so the deployment is fully functioning.
+2. `useEffect` and `router.push()`
+    - in `useEffect`, we may do some state setting then followed up with some navigation using `router.push()`.
+    - However, the navigation may happen during the rendering as a consequence followed by the state settting, which can lead to collapsed rendering.
+    - Therefore, a trick to resolve this is:
+        `setTimeout(()=>{router.push('/...')}, 0) `
+    - 0 as the second parameter indicates to only do it after the rendering completes.
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fvercel%2Fnext.js%2Ftree%2Fcanary%2Fexamples%2Fwith-supabase&project-name=nextjs-with-supabase&repository-name=nextjs-with-supabase&demo-title=nextjs-with-supabase&demo-description=This+starter+configures+Supabase+Auth+to+use+cookies%2C+making+the+user%27s+session+available+throughout+the+entire+Next.js+app+-+Client+Components%2C+Server+Components%2C+Route+Handlers%2C+Server+Actions+and+Middleware.&demo-url=https%3A%2F%2Fdemo-nextjs-with-supabase.vercel.app%2F&external-id=https%3A%2F%2Fgithub.com%2Fvercel%2Fnext.js%2Ftree%2Fcanary%2Fexamples%2Fwith-supabase&demo-image=https%3A%2F%2Fdemo-nextjs-with-supabase.vercel.app%2Fopengraph-image.png)
+3. As long as a component does not change position in the DOM tree, its state does not get reset.
+    - To make a component remount on every navigation onto it, make use of `key=pathname`
 
-The above will also clone the Starter kit to your GitHub, you can clone that locally and develop locally.
+4. More clarification of `router.refresh()`
+    - causes the entire page to be re-rendered
+    - but the state will be retained.
 
-If you wish to just develop locally and not deploy to Vercel, [follow the steps below](#clone-and-run-locally).
+5. `Debounce Timer` - useful for restricting the number of times sending requests to a database as user is giving input.
+    ```js
+    const debounceTimer = useRef<NodeJS.Timeout | null>(null)
 
-## Clone and run locally
+    async function handleScoreChange(event: ChangeEvent<HTMLInputElement>, team: string, scoreState: number, setScore: Dispatch<SetStateAction<number>>) {
+        const oldScore = scoreState
+        const newScore = Number(event.currentTarget.value)
+        setScore(newScore) // update UI immediately
 
-1. You'll first need a Supabase project which can be made [via the Supabase dashboard](https://database.new)
+        // Cancel the previous pending update
+        if (debounceTimer.current) clearTimeout(debounceTimer.current)
 
-2. Create a Next.js app using the Supabase Starter template npx command
+        // Only fire DB update after user stops typing for 500ms
+        debounceTimer.current = setTimeout(async () => {
+            let entry = {}
+            if (team === 'teamA') entry = { score_a: newScore }
+            else if (team === 'teamB') entry = { score_b: newScore }
 
-   ```bash
-   npx create-next-app --example with-supabase with-supabase-app
-   ```
+            const supabase = createClient()
+            const { error: changeScoreError } = await supabase
+                .from(tableName)
+                .update(entry)
+                .eq('id', resultData.id)
 
-   ```bash
-   yarn create next-app --example with-supabase with-supabase-app
-   ```
+            if (changeScoreError) {
+                setScore(oldScore)
+                setError(new Error(changeScoreError.message))
+            } else {
+                setError(null)
+            }
+        }, 500)
+    }
+    ```
 
-   ```bash
-   pnpm create next-app --example with-supabase with-supabase-app
-   ```
+6. PosgresQL - `using` vs `with check` in the policy for `UPDATE`
+    - `using` - check before the database action
+    - `with check` - check after the database action
+    - if no `with check` is given, `using` statemtent will be run again as `with check` in `UPDATE`
 
-3. Use `cd` to change into the app's directory
-
-   ```bash
-   cd with-supabase-app
-   ```
-
-4. Rename `.env.example` to `.env.local` and update the following:
-
-  ```env
-  NEXT_PUBLIC_SUPABASE_URL=[INSERT SUPABASE PROJECT URL]
-  NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=[INSERT SUPABASE PROJECT API PUBLISHABLE OR ANON KEY]
-  ```
-  > [!NOTE]
-  > This example uses `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, which refers to Supabase's new **publishable** key format.
-  > Both legacy **anon** keys and new **publishable** keys can be used with this variable name during the transition period. Supabase's dashboard may show `NEXT_PUBLIC_SUPABASE_ANON_KEY`; its value can be used in this example.
-  > See the [full announcement](https://github.com/orgs/supabase/discussions/29260) for more information.
-
-  Both `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` can be found in [your Supabase project's API settings](https://supabase.com/dashboard/project/_?showConnect=true)
-
-5. You can now run the Next.js local development server:
-
-   ```bash
-   npm run dev
-   ```
-
-   The starter kit should now be running on [localhost:3000](http://localhost:3000/).
-
-6. This template comes with the default shadcn/ui style initialized. If you instead want other ui.shadcn styles, delete `components.json` and [re-install shadcn/ui](https://ui.shadcn.com/docs/installation/next)
-
-> Check out [the docs for Local Development](https://supabase.com/docs/guides/getting-started/local-development) to also run Supabase locally.
-
-## Feedback and issues
-
-Please file feedback and issues over on the [Supabase GitHub org](https://github.com/supabase/supabase/issues/new/choose).
-
-## More Supabase examples
-
-- [Next.js Subscription Payments Starter](https://github.com/vercel/nextjs-subscription-payments)
-- [Cookie-based Auth and the Next.js 13 App Router (free course)](https://youtube.com/playlist?list=PL5S4mPUpp4OtMhpnp93EFSo42iQ40XjbF)
-- [Supabase Auth and the Next.js App Router](https://github.com/supabase/supabase/tree/master/examples/auth/nextjs)
+7. Supabase - realtime subscription
+    - You are always using OLD.id to build the topic name
+    - but on `INSERT`, there is no previous record, which can lead to a topic name of `null`
