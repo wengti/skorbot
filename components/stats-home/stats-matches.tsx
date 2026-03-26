@@ -29,6 +29,7 @@ export default async function StatsMatches({ playerId }: { playerId: string }) {
 
     try {
 
+        /* Fetch all the match that this player has ever played in */
         const supabase = await createClient()
         const { data: rawMatchData, error: matchError } = await supabase
             .from('matches')
@@ -53,6 +54,7 @@ export default async function StatsMatches({ playerId }: { playerId: string }) {
 
                 <div className='flex flex-col md:flex-row gap-2'>
 
+                    {/* All match data */}
                     <div className='md:w-1/2 border rounded-xl p-2 flex flex-col gap-2 h-130'>
                         <div className='text-lg font-bold mb-1 flex gap-2 items-center'>
                             <FaRegCalendarAlt />
@@ -62,6 +64,7 @@ export default async function StatsMatches({ playerId }: { playerId: string }) {
                         <StatsMatchesSection matchData={matchData} />
                     </div>
 
+                    {/* Unlocked match data */}
                     <div className='md:w-1/2 border rounded-xl p-2 flex flex-col gap-2 h-130'>
                         <div className='text-lg font-bold mb-1 flex gap-2 items-center'>
                             <FaLockOpen />

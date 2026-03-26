@@ -12,6 +12,7 @@ export default async function MatchHomePaymentNonOwner({ roomId, matchData, play
 
     try {
 
+        /* Get the file name of player's uploaded receipt */
         const supabase = await createClient()
         const { data: fileNameData, error: fileNameError } = await supabase
             .from('match_players')
@@ -20,17 +21,22 @@ export default async function MatchHomePaymentNonOwner({ roomId, matchData, play
             .eq('match', matchData.id)
         if (fileNameError) throw new Error(fileNameError.message)
         else if (fileNameData === null) throw new Error('Fail to fetch the uploaded receipt.')
-
+        
+        /* Check if there's a valid receipt path */
         const hasUploadedReceipt = fileNameData[0]?.file_name
         let imgSrc = ''
         if (hasUploadedReceipt) imgSrc = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/payment/${roomId}/${matchData.id}/${playerId}/${fileNameData[0].file_name}`
 
+        /* Decide if a visting client is part of the match and need to submit payment receipt */
         const isThisPlayerInTheGame = matchData.players.includes(playerId)
 
+        /* Returned component */
         return (
             <section className='p-2 font-bold text-lg sm:text-xl grow flex flex-col justify-center mt-4'>
 
                 <div className='flex flex-col gap-2'>
+
+                    {/* Title of the receipt upload area */}
                     <div className='flex gap-2 justify-between'>
                         <div className='flex gap-2 items-center'>
                             <FaHistory />
@@ -41,6 +47,7 @@ export default async function MatchHomePaymentNonOwner({ roomId, matchData, play
                         </Link>
                     </div>
 
+                    {/* View area of the uplaoded receipt */}
                     <ScrollArea className='h-30'>
                         <ScrollAreaViewport>
                             {
@@ -58,7 +65,8 @@ export default async function MatchHomePaymentNonOwner({ roomId, matchData, play
                         <ScrollBar orientation="vertical" />
                     </ScrollArea>
                 </div>
-
+                
+                {/* Dropzone for uploading payment receipts */}
                 <div className='flex flex-col gap-2 grow mt-4'>
                     <div className='flex gap-2 items-center'>
                         <FaFileUpload />

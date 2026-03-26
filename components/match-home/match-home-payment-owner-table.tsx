@@ -14,21 +14,24 @@ import { TableBody, TableCell, TableHead, TableHeader, TableRoot, TableRow } fro
 
 export default function MatchHomePaymentOwnerTable({ paymentData, playersData, baseUrl, matchData }: { paymentData: PaymentDataType[], playersData: PlayersDataType[], baseUrl: string, matchData: MatchDataType }) {
 
+    /* State for pagination */
     const [error, setError] = useState<Error | null>(null)
-    const [isPending, setIsPending] = useState<boolean>(false)
     const [currentPage, setCurrentPage] = useState<number>(1)
+    const totalPages = paymentData.length + 1
 
+    /* Optimistic State */
     const [rawPaymentData, setRawPaymentData] = useState<PaymentDataType[]>(paymentData)
     const [optimisticPaymentData, setOptimisticPaymentData] = useOptimistic<PaymentDataType[]>(rawPaymentData)
 
-    const totalPages = paymentData.length + 1
-
+    /* Router */
     const router = useRouter()
 
+    /* Function - Toggle Payment Status */
     async function handleTogglePaymentStatus(matchId: string, playerId: string, newStatus: boolean) {
 
         startTransition(async () => {
 
+            /* Optimistic state change - set to tick / untick instantly */
             setOptimisticPaymentData((prevData) => {
                 const newData = JSON.parse(JSON.stringify(prevData)) as unknown as PaymentDataType[]
                 const target = newData.find(d => d.player === playerId)
@@ -37,6 +40,7 @@ export default function MatchHomePaymentOwnerTable({ paymentData, playersData, b
                 return newData
             })
 
+            /* Update the database accordingly */
             const supabase = createClient()
             const { error } = await supabase
                 .from('match_players')
@@ -44,11 +48,12 @@ export default function MatchHomePaymentOwnerTable({ paymentData, playersData, b
                 .eq('match', matchId)
                 .eq('player', playerId)
             if (error) {
-                setRawPaymentData((prevData) => prevData)
+                setRawPaymentData((prevData) => prevData) /* If any error, reset the state, which lead to optimistic state being reverted */
                 setError(new Error(error.message))
                 return
             }
 
+            /* Get the latest updated state in database */
             const { data: newPaymentData, error: newPaymentError } = await supabase
                 .from('match_players')
                 .select('player, file_name, has_paid')
@@ -56,17 +61,19 @@ export default function MatchHomePaymentOwnerTable({ paymentData, playersData, b
                 .neq('player', matchData.rooms.owner)
                 .order('player', { ascending: false })
             if (newPaymentError) {
-                setRawPaymentData((prevData) => prevData)
+                setRawPaymentData((prevData) => prevData) /* If any error, reset the state, which lead to optimistic state being reverted */
                 setError(new Error(newPaymentError.message))
                 return
             }
 
-            setRawPaymentData(newPaymentData)
+            setRawPaymentData(newPaymentData) /* Finally updated the state to align with the optimistic state */
             setError(null)
         })
     }
 
 
+    /* If current page === 1, return a table */
+    /* Else return a full page displaying the player's submitted receipt */
     let displayElement
     if (currentPage === 1) {
 
@@ -135,6 +142,8 @@ export default function MatchHomePaymentOwnerTable({ paymentData, playersData, b
 
         displayElement = (
             <div className='grow flex flex-col'>
+
+                {/* Title of the payment receipt zone */}
                 <div className='flex gap-2 justify-between mb-2'>
                     <div className='flex gap-2 items-center'>
                         <Image
@@ -155,6 +164,7 @@ export default function MatchHomePaymentOwnerTable({ paymentData, playersData, b
                     }
                 </div>
 
+                {/* View area for the uploaded payment receipt */}
                 <ScrollArea className='h-60 my-auto'>
                     <ScrollAreaViewport>
                         {
@@ -171,7 +181,8 @@ export default function MatchHomePaymentOwnerTable({ paymentData, playersData, b
                     </ScrollAreaViewport>
                     <ScrollBar orientation='vertical' />
                 </ScrollArea>
-
+                
+                {/* Checkbox */}
                 <div className='text-3xl text-center'>
                     <button onClick={() => { handleTogglePaymentStatus(matchData.id, playerProfile.id, !data.has_paid) }}>
                         {
@@ -186,9 +197,8 @@ export default function MatchHomePaymentOwnerTable({ paymentData, playersData, b
     }
 
 
-
+    /* Full returned component with pagination */
     return (
-
         <section className='grow flex flex-col border p-2 rounded-lg'>
             {
                 error &&

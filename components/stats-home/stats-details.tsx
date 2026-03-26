@@ -41,6 +41,7 @@ export default async function StatsDetails({ playerId }: { playerId: string }) {
         else if (rawStatsData === null) throw new Error('Unknown error in fetching the statistics data for this requested player.')
         const statsData = rawStatsData as unknown as StatsDataType[]
 
+        /* Filter the data row based on the relationship - self, teammate, opponent */
         const selfData = statsData.filter(d => d.relationship === 'self')
         const teammateData = statsData.filter(d => d.relationship === 'teammate')
         const opponentData = statsData.filter(d => d.relationship === 'opponent')
@@ -48,6 +49,7 @@ export default async function StatsDetails({ playerId }: { playerId: string }) {
         return (
             <div className="flex flex-col gap-2">
 
+                {/* 4 badges showing summary of a player's stats */}
                 <StatsSummary
                     statsData={selfData}
                     bestTeammate={teammateData[0]}
