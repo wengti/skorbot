@@ -16,18 +16,23 @@ Vist the implementation: https://skorbot.vercel.app/
 Watch a demo video: https://youtu.be/lUbW93Q5HW0
 
 <div align='center'>
-    <img src='/demo/desktop/1.jpg' width='60%' align='center'/>
+    <img src='/demo/desktop/1.jpg' width='80%' align='center'/>
 </div>
 _
 <div align='center'>
-    <img src='/demo/desktop/2.jpg' width='45%' align='center'/>
-    <img src='/demo/desktop/3.jpg' width='45%' align='center'/>
-    
+    <img src='/demo/desktop/2.jpg' width='80%' align='center'/>
 </div>
 _
 <div align='center'>
-    <img src='/demo/desktop/4.jpg' width='45%' align='center'/>
-    <img src='/demo/desktop/5.jpg' width='45%' align='center'/>
+    <img src='/demo/desktop/3.jpg' width='80%' align='center'/>
+</div>
+_
+<div align='center'>
+    <img src='/demo/desktop/4.jpg' width='80%' align='center'/>
+</div>
+_
+<div align='center'>
+    <img src='/demo/desktop/5.jpg' width='80%' align='center'/>
 </div>
 
 ## Key takeaway from the implementation
